@@ -1,9 +1,9 @@
 #
 #-------------------------------------------------------------#
 #  创建者：https://v2rayse.com
-#  创建时间：2025-03-04 14:45:44
+#  创建时间：2025-03-04 15:05:18
 #  模版：v2rayse默认模版
-#  节点数量：32
+#  节点数量：33
 #-------------------------------------------------------------#
 #
 port: 7890
@@ -13,16 +13,17 @@ mode: Rule
 log-level: info
 external-controller: 0.0.0.0:9090
 proxies:
-  - {"type":"vmess","name":"🇭🇰HongKong01","http-opts":{"path":["/"]},"server":"193.42.25.242","port":48506,"uuid":"44f48ebe-af99-447b-a6f8-4a8349f26340","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"🇭🇰HongKong02","http-opts":{"path":["/"]},"server":"103.224.80.111","port":59255,"uuid":"13ce1dbf-c0e7-452b-870a-ad12acb3ef19","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"🇭🇰HongKong04","http-opts":{"path":["/"]},"server":"38.147.189.130","port":13264,"uuid":"8145db0b-c4d7-4389-be41-99f991a4b43f","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"🇭🇰HongKong05","http-opts":{"path":["/"]},"server":"38.147.189.108","port":30559,"uuid":"91a7be1d-e997-46be-9b4f-264dce62584a","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"trojan","name":"🇭🇰HongKong06","server":"wb.kaiqsz.com","port":12221,"password":"64770f2e-b784-4331-938e-26cd54e3eff1","udp":true,"skip-cert-verify":true}
-  - {"type":"trojan","name":"🇭🇰HongKong07","server":"naiu-hk.05vr9nyqg5.download","port":13008,"password":"bba1cfff-9e0b-4cb6-9df4-c741c75e59a8","udp":true,"skip-cert-verify":true}
-  - {"type":"vmess","name":"日本01","http-opts":{"path":["/"]},"server":"45.159.50.128","port":52896,"uuid":"d754d8d8-1e09-4ddc-a379-936fb4602634","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"日本02","http-opts":{"path":["/"]},"server":"45.159.51.189","port":55128,"uuid":"84f9bc0e-400f-4839-98b5-637d5e9c6606","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"日本03","http-opts":{"path":["/"]},"server":"45.159.51.116","port":48019,"uuid":"c06797d5-fa41-4b48-b132-d268d2acb302","alterId":32,"cipher":"auto","network":"http"}
-  - {"type":"vmess","name":"美国01","http-opts":{"path":["/"]},"server":"23.236.68.213","port":49683,"uuid":"109fdd18-2899-4f62-9fb5-f82388c3fe3d","alterId":32,"cipher":"auto","network":"http"}
+  - {"type":"vmess","name":"🇭🇰HongKong01","http-opts":{"path":["/"]},"server":"193.42.25.242","port":"48506","uuid":"44f48ebe-af99-447b-a6f8-4a8349f26340","alterId":"0","cipher":"auto","network":"http"}
+  - {"type":"vmess","name":"🇭🇰HongKong02","http-opts":{"path":["/"]},"server":"103.224.80.111","port":"59255","uuid":"13ce1dbf-c0e7-452b-870a-ad12acb3ef19","alterId":"0","cipher":"auto","network":"http"}
+  - {"type":"vmess","name":"🇭🇰HongKong03","http-opts":{"path":["/"]},"server":"38.147.189.130","port":"13264","uuid":"8145db0b-c4d7-4389-be41-99f991a4b43f","alterId":"0","cipher":"auto","network":"http"}
+  - {"type":"vmess","name":"🇭🇰HongKong04","http-opts":{"path":["/"]},"server":"38.147.189.108","port":"30559","uuid":"91a7be1d-e997-46be-9b4f-264dce62584a","alterId":"0","cipher":"auto","network":"http"}
+  - {"type":"trojan","name":"🇭🇰HongKong05","server":"naiu-hk.05vr9nyqg5.download","port":13008,"password":"bba1cfff-9e0b-4cb6-9df4-c741c75e59a8","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong06","server":"14.152.37.217","port":38080,"password":"f1483c8169f9b138b9fdd56fe4994096","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong07","server":"vhk1211a.iamgone.top","port":30063,"password":"e75f4422b7234b52","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong08","server":"14.152.37.217","port":38079,"password":"f1483c8169f9b138b9fdd56fe4994096","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong19","server":"vhk1119a.iamback.top","port":30066,"password":"7e568d289c804130","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong10","server":"wb.kaiqsz.com","port":12221,"password":"64770f2e-b784-4331-938e-26cd54e3eff1","udp":true,"skip-cert-verify":true}
+  - {"type":"trojan","name":"🇭🇰HongKong11","server":"naiu-hk.05vr9nyqg5.download","port":13008,"password":"bba1cfff-9e0b-4cb6-9df4-c741c75e59a8","udp":true,"skip-cert-verify":true}
   - {"type":"trojan","name":"🇳🇱荷兰","server":"lm.kaiqsz.com","port":23852,"password":"7cd29891-fe78-4f8f-8844-abb31b9d9a75","udp":true,"skip-cert-verify":true}
   - {"type":"trojan","name":"🇨🇳台湾1","server":"wb.kaiqsz.com","port":42765,"password":"64770f2e-b784-4331-938e-26cd54e3eff1","udp":true,"skip-cert-verify":true}
   - {"type":"trojan","name":"🇨🇳台湾2","server":"wb.kaiqsz.com","port":42765,"password":"64770f2e-b784-4331-938e-26cd54e3eff1","udp":true,"skip-cert-verify":true}
@@ -51,16 +52,17 @@ proxy-groups:
     proxies:
       - ♻️ 自动选择
       - DIRECT
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -89,16 +91,17 @@ proxy-groups:
     interval: 300
     tolerance: 50
     proxies:
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -127,16 +130,17 @@ proxy-groups:
       - 🚀 节点选择
       - ♻️ 自动选择
       - 🎯 全球直连
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -164,16 +168,17 @@ proxy-groups:
     proxies:
       - 🚀 节点选择
       - 🎯 全球直连
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -201,16 +206,17 @@ proxy-groups:
     proxies:
       - 🎯 全球直连
       - 🚀 节点选择
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -238,16 +244,17 @@ proxy-groups:
     proxies:
       - 🚀 节点选择
       - 🎯 全球直连
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
@@ -292,16 +299,17 @@ proxy-groups:
       - 🚀 节点选择
       - 🎯 全球直连
       - ♻️ 自动选择
-      - 🇭🇰HongKong01
-      - 🇭🇰HongKong02
-      - 🇭🇰HongKong04
-      - 🇭🇰HongKong05
+      - 香港负载均衡1
+      - 香港负载均衡2
+      - 香港负载均衡4
+      - 香港负载均衡5
       - 🇭🇰HongKong06
       - 🇭🇰HongKong07
-      - 日本01
-      - 日本02
-      - 日本03
-      - 美国01
+      - 🇭🇰HongKong08
+      - 🇭🇰HongKong09
+      - 🇭🇰HongKong10
+      - 香港负载均衡6
+      - 香港负载均衡7
       - 🇳🇱荷兰
       - 🇨🇳台湾1
       - 🇨🇳台湾2
