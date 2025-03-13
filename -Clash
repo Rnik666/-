@@ -33,9 +33,9 @@ proxies:
   tls: false
 - name: 香港负载均衡3
   type: vmess
-  uuid: 09cade3b-19d9-490a-ab43-2233506c3461
-  server: 103.30.76.129
-  port: 48348
+  uuid: 1603cb09-8f18-4b6d-a4ad-970a35045ec8
+  server: 103.224.80.29
+  port: 52587
   client-fingerprint: chrome
   tfo: false
   udp: false
@@ -61,7 +61,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 12221
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -69,7 +69,7 @@ proxies:
 - name: 香港负载均衡6
   type: trojan
   server: naiu-hk.05vr9nyqg5.download
-  port: 13007
+  port: 13006
   password: bba1cfff-9e0b-4cb6-9df4-c741c75e59a8
   client-fingerprint: chrome
   udp: false
@@ -105,7 +105,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 42765
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -114,16 +114,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 42765
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
-  client-fingerprint: chrome
-  udp: false
-  skip-cert-verify: false
-  sni: mmbiz1.redapricotcloud.com
-- name: 🇨🇳 台湾3
-  type: trojan
-  server: wb.kaiqsz.com
-  port: 42765
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -132,7 +123,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 48291
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -141,7 +132,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 18489
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -150,7 +141,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 28713
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -159,16 +150,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 28713
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
-  client-fingerprint: chrome
-  udp: false
-  skip-cert-verify: false
-  sni: mmbiz1.redapricotcloud.com
-- name: 🇯🇵 日本1-原生
-  type: trojan
-  server: lm.kaiqsz.com
-  port: 10367
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -177,7 +159,7 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 21489
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -186,43 +168,34 @@ proxies:
   type: trojan
   server: wb.kaiqsz.com
   port: 21489
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz.redapricotcloud.com
-- name: 🇺🇸 美国原生
-  type: trojan
-  server: nbae7a7.kaiqsz.com
-  port: 53547
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
-  client-fingerprint: chrome
-  udp: false
-  skip-cert-verify: false
-  sni: mmbiz.redapricotcloud.com
-- name: 🇰🇷 韩国
-  type: trojan
-  server: lm.kaiqsz.com
-  port: 39593
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
-  client-fingerprint: chrome
-  udp: false
-  skip-cert-verify: false
-  sni: mmbiz10.redapricotcloud.com
 - name: 🇰🇷 韩国-首尔
   type: trojan
   server: lm.kaiqsz.com
   port: 51075
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz10.redapricotcloud.com
+- name: 🇩🇪 德国
+  type: trojan
+  server: lm.kaiqsz.com
+  port: 21463
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
+  client-fingerprint: chrome
+  udp: false
+  skip-cert-verify: false
+  sni: mmbiz12.redapricotcloud.com
 - name: 🇫🇷 法国
   type: trojan
   server: lm.kaiqsz.com
   port: 52508
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -231,34 +204,43 @@ proxies:
   type: trojan
   server: lm.kaiqsz.com
   port: 59358
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz11.redapricotcloud.com
-- name: 🇳🇱 荷兰
+- name: 🇨🇱 智利
   type: trojan
   server: lm.kaiqsz.com
-  port: 23852
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  port: 44134
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
-  sni: mmbiz13.redapricotcloud.com
+  sni: mmbiz10.redapricotcloud.com
+- name: 🇧🇷 巴西
+  type: trojan
+  server: lm.kaiqsz.com
+  port: 28499
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
+  client-fingerprint: chrome
+  udp: false
+  skip-cert-verify: false
+  sni: mmbiz10.redapricotcloud.com
 - name: 🇸🇪 瑞典
   type: trojan
   server: lm.kaiqsz.com
   port: 59225
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz12.redapricotcloud.com
-- name: 🇲🇽 墨西哥
+- name: 🇨🇦 加拿大
   type: trojan
   server: lm.kaiqsz.com
-  port: 14571
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  port: 50121
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -267,25 +249,43 @@ proxies:
   type: trojan
   server: lm.kaiqsz.com
   port: 50757
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz14.redapricotcloud.com
-- name: 🇦🇪 迪拜
+- name: 🇸🇦 沙特阿拉伯
   type: trojan
   server: lm.kaiqsz.com
-  port: 47621
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  port: 56072
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
+  client-fingerprint: chrome
+  udp: false
+  skip-cert-verify: false
+  sni: mmbiz11.redapricotcloud.com
+- name: 🇨🇴 哥伦比亚
+  type: trojan
+  server: lm.kaiqsz.com
+  port: 25118
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
   sni: mmbiz10.redapricotcloud.com
+- name: 🇮🇱 以色列
+  type: trojan
+  server: lm.kaiqsz.com
+  port: 44650
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
+  client-fingerprint: chrome
+  udp: false
+  skip-cert-verify: false
+  sni: mmbiz11.redapricotcloud.com
 - name: 🇻🇳 越南
   type: trojan
   server: lm.kaiqsz.com
   port: 59009
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -294,7 +294,7 @@ proxies:
   type: trojan
   server: lm.kaiqsz.com
   port: 43855
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -303,16 +303,7 @@ proxies:
   type: trojan
   server: lm.kaiqsz.com
   port: 16783
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
-  client-fingerprint: chrome
-  udp: false
-  skip-cert-verify: false
-  sni: mmbiz15.redapricotcloud.com
-- name: 🇵🇭 菲律宾
-  type: trojan
-  server: lm.kaiqsz.com
-  port: 58947
-  password: d3b8b2c5-1115-4af0-ae13-00ec86eabcf8
+  password: 8fa7b475-1957-42e3-8127-be3035bed9f4
   client-fingerprint: chrome
   udp: false
   skip-cert-verify: false
@@ -333,28 +324,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: ♻️ 自动选择
   type: url-test
   url: http://www.gstatic.com/generate_204
@@ -371,28 +361,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: 🌍 国外媒体
   type: select
   proxies:
@@ -409,28 +398,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: 📲 电报信息
   type: select
   proxies:
@@ -446,28 +434,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: Ⓜ️ 微软服务
   type: select
   proxies:
@@ -483,28 +470,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: 🍎 苹果服务
   type: select
   proxies:
@@ -520,28 +506,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: 📢 谷歌FCM
   type: select
   proxies:
@@ -558,28 +543,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 - name: 🎯 全球直连
   type: select
   proxies:
@@ -612,28 +596,27 @@ proxy-groups:
   - 美国 01
   - 🇨🇳 台湾1
   - 🇨🇳 台湾2
-  - 🇨🇳 台湾3
   - 🇸🇬 新加坡1
   - 🇸🇬 新加坡2
   - 🇯🇵 日本1
   - 🇯🇵 日本2
-  - 🇯🇵 日本1-原生
   - 🇺🇸 美国1
   - 🇺🇸 美国2
-  - 🇺🇸 美国原生
-  - 🇰🇷 韩国
   - 🇰🇷 韩国-首尔
+  - 🇩🇪 德国
   - 🇫🇷 法国
   - 🇬🇧 英国
-  - 🇳🇱 荷兰
+  - 🇨🇱 智利
+  - 🇧🇷 巴西
   - 🇸🇪 瑞典
-  - 🇲🇽 墨西哥
+  - 🇨🇦 加拿大
   - 🇦🇺 澳大利亚
-  - 🇦🇪 迪拜
+  - 🇸🇦 沙特阿拉伯
+  - 🇨🇴 哥伦比亚
+  - 🇮🇱 以色列
   - 🇻🇳 越南
   - 🇹🇭 泰国
   - 🇷🇺 莫斯科
-  - 🇵🇭 菲律宾
 rules:
 - DOMAIN-SUFFIX,acl4.ssr,🎯 全球直连
 - DOMAIN-SUFFIX,ip6-localhost,🎯 全球直连
