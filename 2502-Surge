@@ -1,0 +1,94 @@
+
+[General]
+loglevel = notify
+bypass-system = true
+skip-proxy = 127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,100.64.0.0/10,localhost,*.local,e.crashlytics.com,captive.apple.com,::ffff:0:0:0:0/1,::ffff:128:0:0:0/1
+#DNS设置或根据自己网络情况进行相应设置
+bypass-tun = 192.168.0.0/16,10.0.0.0/8,172.16.0.0/12
+dns-server = 119.29.29.29,223.5.5.5,218.30.19.40,61.134.1.4
+external-controller-access = password@0.0.0.0:6170
+http-api = password@0.0.0.0:6171
+test-timeout = 5
+http-api-web-dashboard = true
+exclude-simple-hostnames = true
+allow-wifi-access = true
+http-listen = 0.0.0.0:6152
+socks5-listen = 0.0.0.0:6153
+wifi-access-http-port = 6152
+wifi-access-socks5-port = 6153
+
+[Script]
+http-request https?:\/\/.*\.iqiyi\.com\/.*authcookie= script-path=https://raw.githubusercontent.com/NobyDa/Script/master/iQIYI-DailyBonus/iQIYI.js
+
+[Proxy]
+DIRECT = direct
+🇭🇰 HK001 = vmess, n1749025160.kzxds.cn, 443, username=0748e262-a510-4327-83eb-9e63730a83bf, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1749025160.kzxds.cn, ws-headers=Host:n1749025160.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK002 = vmess, n1747624263.4u9ma.icu, 443, username=db87cc58-2568-4840-a305-75fdc6917831, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1747624263.4u9ma.icu, ws-headers=Host:n1747624263.4u9ma.icu, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK003 = vmess, n1756050416.kzxds.cn, 443, username=515a3d7e-b8d1-4170-819f-75b0a33b2d2f, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1756050416.kzxds.cn, ws-headers=Host:n1756050416.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK004 = vmess, n1756050415.kzxds.cn, 443, username=54247a8a-b33d-42b5-81fb-a47b72cc29dd, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1756050415.kzxds.cn, ws-headers=Host:n1756050415.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK005 = vmess, n1747624260.4u9ma.icu, 443, username=eee8cb72-7eab-4034-a308-ed06cb07e003, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1747624260.4u9ma.icu, ws-headers=Host:n1747624260.4u9ma.icu, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK006 = vmess, n1754445495.xlxzzx.com, 443, username=d35b29d1-c122-433e-b193-8ea672925f5e, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1754445495.xlxzzx.com, ws-headers=Host:n1754445495.xlxzzx.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK007 = vmess, n1756050417.kzxds.cn, 443, username=4346d2bd-57ea-4d05-9860-ef0e415f0f75, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1756050417.kzxds.cn, ws-headers=Host:n1756050417.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK008 = vmess, n1756050418.kzxds.cn, 443, username=365469ea-1d39-433f-b590-13e83d34b0da, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1756050418.kzxds.cn, ws-headers=Host:n1756050418.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK009 = vmess, n1754445498.kzxds.cn, 443, username=df12b14d-7b32-405a-9881-a0214cce16a2, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1754445498.kzxds.cn, ws-headers=Host:n1754445498.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 HK010 = vmess, n1754445497.kzxds.cn, 443, username=5c69f047-259d-4fc5-894a-d27212e26d92, tls=true, vmess-aead=false, ws=true, ws-path=/, sni=n1754445497.kzxds.cn, ws-headers=Host:n1754445497.kzxds.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 香港02 = trojan, 115.236.100.149, 57995, password=5616a6875743bfbd7cfa5eb7605665f8, sni=console.ucloud.cn, skip-cert-verify=false, tfo=false, udp-relay=false
+🇭🇰 香港03 = trojan, 113.99.143.132, 15936, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇸🇬 新加坡01 = trojan, 115.236.100.149, 36432, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇸🇬 新加坡02 = trojan, 115.236.100.149, 36432, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇸🇬 新加坡03 = trojan, 115.236.100.149, 59227, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇯🇵 日本01 = trojan, 115.236.100.149, 18727, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇯🇵 日本02 = trojan, 115.236.100.149, 22614, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇯🇵 日本03 = trojan, 124.151.25.61, 38391, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇺🇸 美国01 = trojan, 115.236.100.149, 45796, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇺🇸 美国02 = trojan, 115.236.100.149, 35047, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇺🇸 美国03 = trojan, 115.236.100.149, 54298, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇰🇷 韩国01 = trojan, 115.236.100.149, 13400, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇰🇷 韩国02 = trojan, 115.236.100.149, 44235, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇰🇷 韩国03 = trojan, 115.236.100.149, 15538, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇹🇼 台湾01 = trojan, 115.236.100.149, 39255, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇹🇼 台湾02 = trojan, 115.236.100.149, 36384, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇦🇪 阿联酋 = trojan, 115.236.100.149, 24495, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇬🇧 英国01 = trojan, 115.236.100.149, 58439, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇬🇧 英国02 = trojan, 113.99.143.135, 48696, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇬🇧 英国03 = trojan, 115.236.100.149, 58439, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇲🇴 澳门 = trojan, 113.99.143.135, 56865, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇺🇸 亚美尼亚 = trojan, 115.236.100.149, 56397, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇬🇷 希腊 = trojan, 115.236.100.149, 26910, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇨🇦 加拿大 = trojan, 115.236.100.149, 10560, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇹🇷 土耳其01 = trojan, 115.236.100.149, 26891, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇹🇷 土耳其02 = trojan, 115.236.100.149, 30086, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇮🇱 以色列 = trojan, 115.236.100.149, 17514, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+🇰🇿 哈萨克斯坦 = trojan, 115.236.100.149, 38011, password=5616a6875743bfbd7cfa5eb7605665f8, sni=pss.bdstatic.com, skip-cert-verify=false, tfo=false, udp-relay=false
+
+[Proxy Group]
+🚀 节点选择 = select,♻️ 自动选择,DIRECT,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+♻️ 自动选择 = url-test,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦,url=http://www.gstatic.com/generate_204,interval=300,tolerance=50
+🌍 国外媒体 = select,🚀 节点选择,♻️ 自动选择,🎯 全球直连,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+📲 电报信息 = select,🚀 节点选择,🎯 全球直连,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+Ⓜ️ 微软服务 = select,🎯 全球直连,🚀 节点选择,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+🍎 苹果服务 = select,🚀 节点选择,🎯 全球直连,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+📢 谷歌FCM = select,🚀 节点选择,🎯 全球直连,♻️ 自动选择,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+🎯 全球直连 = select,DIRECT,🚀 节点选择,♻️ 自动选择
+🛑 全球拦截 = select,REJECT,DIRECT
+🍃 应用净化 = select,REJECT,DIRECT
+🐟 漏网之鱼 = select,🚀 节点选择,🎯 全球直连,♻️ 自动选择,🇭🇰 HK001,🇭🇰 HK002,🇭🇰 HK003,🇭🇰 HK004,🇭🇰 HK005,🇭🇰 HK006,🇭🇰 HK007,🇭🇰 HK008,🇭🇰 HK009,🇭🇰 HK010,🇭🇰 香港02,🇭🇰 香港03,🇸🇬 新加坡01,🇸🇬 新加坡02,🇸🇬 新加坡03,🇯🇵 日本01,🇯🇵 日本02,🇯🇵 日本03,🇺🇸 美国01,🇺🇸 美国02,🇺🇸 美国03,🇰🇷 韩国01,🇰🇷 韩国02,🇰🇷 韩国03,🇹🇼 台湾01,🇹🇼 台湾02,🇦🇪 阿联酋,🇬🇧 英国01,🇬🇧 英国02,🇬🇧 英国03,🇲🇴 澳门,🇺🇸 亚美尼亚,🇬🇷 希腊,🇨🇦 加拿大,🇹🇷 土耳其01,🇹🇷 土耳其02,🇮🇱 以色列,🇰🇿 哈萨克斯坦
+
+[Rule]
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list,🎯 全球直连,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list,🎯 全球直连,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list,🛑 全球拦截,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list,🍃 应用净化,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/GoogleFCM.list,📢 谷歌FCM,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/GoogleCN.list,🎯 全球直连,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/SteamCN.list,🎯 全球直连,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Microsoft.list,Ⓜ️ 微软服务,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Apple.list,🍎 苹果服务,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list,📲 电报信息,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list,🌍 国外媒体,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyLite.list,🚀 节点选择,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list,🎯 全球直连,update-interval=86400
+RULE-SET,https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list,🎯 全球直连,update-interval=86400
+GEOIP,CN,🎯 全球直连
+FINAL,🐟 漏网之鱼
+
