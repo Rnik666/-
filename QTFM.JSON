@@ -1,7 +1,5 @@
 {
-    "qt-access-token": "f04851608b074ef4b993851fca249a42",
-    "accept": "*/*",
-    "qt-device-id": "574b5dbed3d39efdf4c3a641be63d4ec",
+    "qt-device-id": "117b9fc1db9cb894898097473507acfd",
     "qt-adcode": "310100",
     "qt-app-version": "11.0.2.0",
     "qt-app-platform": "iOS",
@@ -10,6 +8,6 @@
     "accept-language": "zh-Hans-CN;q=1, en-CN;q=0.9, en-GB;q=0.8, zh-Hant-CN;q=0.7",
     "accept-encoding": "gzip, deflate, br",
     "connection": "keep-alive",
-    "cookie": "HWWAFSESID=f4669e5b2d04620d8b; HWWAFSESTIME=1773043172564",
-    "content-type": "application/json"
+    "qt-access-token": "da08fd94396f4d41a265155322030715",
+    "cookie": "HWWAFSESID=35a9f1b7f73bf554b42; HWWAFSESTIME=1773048007047"
 }
