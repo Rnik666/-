@@ -1,10 +1,5 @@
 {
-  "ticket": "A22A505A799A3294A02B200DE382AC21",
-  "alert": {
-    "show": true,
-   "title": "寰俊鍏紬鍙� ios绉戞妧绔�",
-    "message": "鏈蒋浠舵案涔呭厤璐逛娇鐢紝璇蜂笉瑕佸晢涓氳喘涔� 寮圭獥24灏忔椂涓€娆�",
-    "btnText": "ios楦＄瀵艰埅",
-    "url": "https://gjds.vip/"
-  }
+  "ticket": "561725BC205138B7B327163154FAB636",
+  "cookie": "HDCN={ticket}-318530007; loginAccount=17720288544; uuid=3c8782341a7f5d7aa8c4f1df9d09f98b; vipStatus=1; mba_deviceid=a1370159-4b02-277a-7801-735517185169; mg_uuid=05427fca-c8e0-4b54-9c23-ede8500a695d",
+  "urlParams": "source=vip_newHome&seekSourceType=0&keepPlay=1&playType=1&...&ticket={ticket}"
 }
