@@ -1,4 +1,10 @@
-[
-    "A22A505A799A3294A02B200DE382AC21",
-    "A22A505A799A3294A02B200DE382AC21"
-]
+{
+  "ticket": "A22A505A799A3294A02B200DE382AC21",
+  "alert": {
+    "show": true,
+   "title": "寰俊鍏紬鍙� ios绉戞妧绔�",
+    "message": "鏈蒋浠舵案涔呭厤璐逛娇鐢紝璇蜂笉瑕佸晢涓氳喘涔� 寮圭獥24灏忔椂涓€娆�",
+    "btnText": "ios楦＄瀵艰埅",
+    "url": "https://gjds.vip/"
+  }
+}
