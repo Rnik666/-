@@ -1,0 +1,104 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+bind-address: "*"
+ipv6: false
+mode: Rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+dns:
+  enable: true
+  ipv6: false
+  listen: 0.0.0.0:53
+  fake-ip-range: 198.18.0.1/16
+  use-hosts: true
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.arpa"
+    - time.*.com
+    - ntp.*.com
+    - +.market.xiaomi.com
+    - localhost.ptlogin2.qq.com
+    - "*.msftncsi.com"
+    - www.msftconnecttest.com
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+  nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+  nameserver-policy:
+    geosite:cn:
+      - 119.29.29.29
+      - 223.5.5.5
+    geosite:geolocation-!cn:
+      - tls://1.0.0.1:853
+      - tls://dns.google:853
+  proxy-server-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+  fallback:
+    - 8.8.8.8
+    - 1.1.1.1
+    - tls://1.0.0.1:853
+    - tls://dns.google:853
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+
+proxies:
+  - {name: 🇸🇬 新加坡1, server: pro-mako.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡2, server: intimate-adder.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡3, server: upward-squid.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡4, server: hot-tapir.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡5, server: modern-chimp.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡 6, server: needed-haddock.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡 7, server: capital-penguin.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡8, server: integral-rodent.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡9, server: smashing-fawn.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡 10, server: simple-sunbeam.rooster465.autos, port: 443, type: trojan, password: VK46789120}
+  - {name: 🇸🇬 新加坡-11, server: wti11.pacemakere.com, port: 35001, type: trojan, password: 66fab50b39c049a8, skip-cert-verify: true}
+  - {name: 🇸🇬 新加坡-12, server: wti11.pacemakere.com, port: 35040, type: trojan, password: f994d3f56234442f, skip-cert-verify: true}
+  - {name: 🇸🇬 新加坡-13, server: t193m.iamnew2020.top, port: 99, type: trojan, password: 62718bfbd2d8979f, skip-cert-verify: true}
+  - {name: 🇸🇬 新加坡-14, server: wt125.pacemakere.com, port: 30041, type: trojan, password: aacc14754431491c}
+  - {name: 🇸🇬 新加坡-15, server: wti11.pacemakere.com, port: 30040, type: trojan, password: 5110e639df864ba4, sni: cm.g.doubleclick.net, skip-cert-verify: true}
+  - {name: 🇸🇬 新加坡-16, server: wt125.pacemakere.com, port: 30041, type: trojan, password: aacc14754431491c}
+  - {name: 🇸🇬 新加坡-17, server: wt194.moldscience.cc, port: 99, type: trojan, password: ff01639a76ec43ce, sni: cm.g.doubleclick.net, skip-cert-verify: true}
+  - {name: 🇸🇬 新加坡-18, server: wti11.pacemakere.com, port: 30044, type: trojan, password: 66f75f8d025443ff, sni: cm.g.doubleclick.net, skip-cert-verify: true}
+  - {name: 🇹🇭 泰国, server: speed-01.aliyun-web-tracker.cn, port: 30093, type: ss, cipher: aes-128-gcm, password: fe1eac15e12ecc0334d2deb347bf3e95}
+
+proxy-groups:
+  - name: ⚡ 自动测速
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 1          # 每秒测速，最快响应
+    tolerance: 0         # 延迟更低立即切换
+    proxies:
+      - 🇸🇬 新加坡1
+      - 🇸🇬 新加坡2
+      - 🇸🇬 新加坡3
+      - 🇸🇬 新加坡4
+      - 🇸🇬 新加坡5
+      - 🇸🇬 新加坡 6
+      - 🇸🇬 新加坡 7
+      - 🇸🇬 新加坡8
+      - 🇸🇬 新加坡9
+      - 🇸🇬 新加坡 10
+      - 🇸🇬 新加坡-11
+      - 🇸🇬 新加坡-12
+      - 🇸🇬 新加坡-13
+      - 🇸🇬 新加坡-14
+      - 🇸🇬 新加坡-15
+      - 🇸🇬 新加坡-16
+      - 🇸🇬 新加坡-17
+      - 🇸🇬 新加坡-18
+      - 🇹🇭 泰国
+
+rules:
+  - MATCH,⚡ 自动测速
