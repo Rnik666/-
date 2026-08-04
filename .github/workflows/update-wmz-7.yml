@@ -15,70 +15,143 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 18
     steps:
-      - name: Checkout 2024 branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
           ref: "2024/3"
           fetch-depth: 0
 
-      - name: Select 22 random reachable nodes
+      - name: Install sing-box
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
+          url=$(curl -fsSL "$api" | jq -r '.assets[].browser_download_url | select(test("linux-amd64.tar.gz$"))' | head -n 1)
+          test -n "$url"
+          curl -fsSL "$url" -o /tmp/sing-box.tar.gz
+          mkdir -p /tmp/sing-box
+          tar -xzf /tmp/sing-box.tar.gz -C /tmp/sing-box --strip-components=1
+          sudo install /tmp/sing-box/sing-box /usr/local/bin/sing-box
+          sing-box version
+
+      - name: Select 22 fastest reliable nodes
         shell: bash
         run: |
           python3 <<'PY'
           import base64
+          import json
           import pathlib
-          import random
           import socket
+          import statistics
+          import subprocess
+          import tempfile
+          import time
           import urllib.parse
           import urllib.request
           from concurrent.futures import ThreadPoolExecutor, as_completed
 
-          source_url = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-          target = pathlib.Path("WMZ-7")
-          required = 22
+          SOURCE = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
+          TARGET = pathlib.Path("WMZ-7")
+          REQUIRED = 22
+          TEST_URL = "https://www.gstatic.com/generate_204"
 
-          request = urllib.request.Request(source_url, headers={"User-Agent": "GitHub-Actions"})
+          request = urllib.request.Request(SOURCE, headers={"User-Agent": "GitHub-Actions"})
           with urllib.request.urlopen(request, timeout=60) as response:
               encoded = response.read().strip()
-
-          try:
-              decoded = base64.b64decode(encoded, validate=True).decode("utf-8")
-          except Exception as error:
-              raise SystemExit(f"Invalid Base64 subscription: {error}")
-
+          decoded = base64.b64decode(encoded, validate=True).decode("utf-8")
           nodes = list(dict.fromkeys(line.strip() for line in decoded.splitlines() if line.strip()))
-          random.SystemRandom().shuffle(nodes)
 
-          def endpoint(node):
+          def free_port():
+              with socket.socket() as sock:
+                  sock.bind(("127.0.0.1", 0))
+                  return sock.getsockname()[1]
+
+          def test_node(node):
               parsed = urllib.parse.urlsplit(node)
-              if not parsed.hostname or not parsed.port:
-                  raise ValueError("missing host or port")
-              return parsed.hostname, parsed.port
-
-          def reachable(node):
-              try:
-                  host, port = endpoint(node)
-                  with socket.create_connection((host, port), timeout=4):
-                      return node
-              except (OSError, ValueError):
+              if parsed.scheme != "trojan" or not parsed.hostname or not parsed.port or not parsed.username:
                   return None
 
-          available = []
-          with ThreadPoolExecutor(max_workers=30) as executor:
-              futures = [executor.submit(reachable, node) for node in nodes]
+              local_port = free_port()
+              config = {
+                  "log": {"level": "error"},
+                  "inbounds": [{
+                      "type": "socks",
+                      "tag": "in",
+                      "listen": "127.0.0.1",
+                      "listen_port": local_port
+                  }],
+                  "outbounds": [{
+                      "type": "trojan",
+                      "tag": "proxy",
+                      "server": parsed.hostname,
+                      "server_port": parsed.port,
+                      "password": urllib.parse.unquote(parsed.username),
+                      "tls": {
+                          "enabled": True,
+                          "server_name": parsed.hostname,
+                          "insecure": False
+                      }
+                  }],
+                  "route": {"final": "proxy"}
+              }
+
+              with tempfile.TemporaryDirectory() as directory:
+                  config_path = pathlib.Path(directory) / "config.json"
+                  config_path.write_text(json.dumps(config), encoding="utf-8")
+                  process = subprocess.Popen(
+                      ["sing-box", "run", "-c", str(config_path)],
+                      stdout=subprocess.DEVNULL,
+                      stderr=subprocess.DEVNULL
+                  )
+                  try:
+                      time.sleep(0.35)
+                      delays = []
+                      for _ in range(2):
+                          started = time.monotonic()
+                          result = subprocess.run(
+                              [
+                                  "curl", "-fsS", "--max-time", "7",
+                                  "--socks5-hostname", f"127.0.0.1:{local_port}",
+                                  "-o", "/dev/null", "-w", "%{http_code}",
+                                  TEST_URL
+                              ],
+                              capture_output=True,
+                              text=True,
+                              timeout=9
+                          )
+                          if result.returncode != 0 or result.stdout.strip() != "204":
+                              return None
+                          delays.append((time.monotonic() - started) * 1000)
+                      return statistics.median(delays), node
+                  except (OSError, subprocess.TimeoutExpired):
+                      return None
+                  finally:
+                      process.terminate()
+                      try:
+                          process.wait(timeout=2)
+                      except subprocess.TimeoutExpired:
+                          process.kill()
+
+          results = []
+          with ThreadPoolExecutor(max_workers=8) as executor:
+              futures = [executor.submit(test_node, node) for node in nodes]
               for future in as_completed(futures):
-                  node = future.result()
-                  if node:
-                      available.append(node)
+                  result = future.result()
+                  if result:
+                      results.append(result)
+                      print(f"Passed: {result[0]:.0f} ms", flush=True)
 
-          if len(available) < required:
-              raise SystemExit(f"Only {len(available)} reachable nodes; {required} required")
+          results.sort(key=lambda item: item[0])
+          if len(results) < REQUIRED:
+              raise SystemExit(f"Only {len(results)} nodes passed two proxy tests; {REQUIRED} required")
 
-          selected = random.SystemRandom().sample(available, required)
+          selected = [node for _, node in results[:REQUIRED]]
           output = "\n".join(selected) + "\n"
-          target.write_text(base64.b64encode(output.encode()).decode() + "\n", encoding="utf-8")
-          print(f"Selected {required} random nodes from {len(available)} TCP-reachable nodes")
+          TARGET.write_text(base64.b64encode(output.encode()).decode() + "\n", encoding="utf-8")
+          print(f"Selected fastest {REQUIRED} of {len(results)} reliable nodes")
+          print(f"Latency range: {results[0][0]:.0f}-{results[REQUIRED - 1][0]:.0f} ms")
           PY
 
       - name: Commit changes
@@ -91,6 +164,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "WMZ-7"
-          git commit -m "Auto update WMZ-7 with random reachable nodes"
+          git commit -m "Update WMZ-7 with fastest reliable nodes"
           git push origin "HEAD:refs/heads/2024/3"
   
