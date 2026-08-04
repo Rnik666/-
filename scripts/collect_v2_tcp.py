@@ -20,11 +20,7 @@ IV = os.environ["STARVPN_AES_IV"].encode()
 ACCOUNT = os.environ["STARVPN_ACCOUNT_ID"]
 API = "http://47.129.170.28/service/line.php"
 TARGET = pathlib.Path("-V2")
-TEST_URLS = (
-    "https://www.gstatic.com/generate_204",
-    "https://cp.cloudflare.com/generate_204",
-    "https://www.google.com/generate_204",
-)
+SERVER_CHECK_URL = "http://www.gstatic.com/generate_204"
 
 
 def pad(data):
@@ -103,9 +99,8 @@ def collect_once(run):
         host = str(node.get("server", "")).strip()
         port = str(node.get("port", "")).strip()
         if host in servers and port:
-            label = urllib.parse.quote(f"🇸🇬 新加坡 TCP R{run}", safe="")
             password = urllib.parse.quote(ACCOUNT, safe="")
-            result.append(f"trojan://{password}@{host}:{port}?mux=1#{label}")
+            result.append(f"trojan://{password}@{host}:{port}?mux=1")
     print(f"Collection {run}: {len(result)} TCP nodes", flush=True)
     return result
 
@@ -136,17 +131,16 @@ def test_node(node):
             time.sleep(0.45)
             delays = []
             for _ in range(3):
-                for url in TEST_URLS:
-                    started = time.monotonic()
-                    result = subprocess.run(
-                        ["curl", "-fsS", "--max-time", "8", "--connect-timeout", "5", "--socks5-hostname", f"127.0.0.1:{local_port}", "-o", "/dev/null", "-w", "%{http_code}", url],
-                        capture_output=True,
-                        text=True,
-                        timeout=10,
-                    )
-                    if result.returncode or result.stdout.strip() != "204":
-                        return None
-                    delays.append((time.monotonic() - started) * 1000)
+                started = time.monotonic()
+                result = subprocess.run(
+                    ["curl", "-fsS", "--max-time", "8", "--connect-timeout", "5", "--socks5-hostname", f"127.0.0.1:{local_port}", "-o", "/dev/null", "-w", "%{http_code}", SERVER_CHECK_URL],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                )
+                if result.returncode or result.stdout.strip() != "204":
+                    return None
+                delays.append((time.monotonic() - started) * 1000)
             ordered = sorted(delays)
             p90 = ordered[max(0, int(len(ordered) * 0.9) - 1)]
             return p90 + statistics.pstdev(delays) * 0.5, node
@@ -181,7 +175,11 @@ with ThreadPoolExecutor(max_workers=6) as executor:
 passed.sort(key=lambda item: item[0])
 if not passed:
     raise SystemExit("No TCP node passed all tests; old -V2 preserved")
-output = "\n".join(node for _, node in passed) + "\n"
+renamed = []
+for index, (_, node) in enumerate(passed, 1):
+    label = urllib.parse.quote(f"🇸🇬 新加坡 {index}", safe="")
+    renamed.append(f"{node}#{label}")
+output = "\n".join(renamed) + "\n"
 TARGET.write_text(base64.b64encode(output.encode()).decode() + "\n")
 print(f"Saved all {len(passed)} working TCP nodes sorted fastest-first")
-  
+    
