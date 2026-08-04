@@ -23,20 +23,20 @@ jobs:
           ref: "2024/3"
           fetch-depth: 0
 
-      - name: Install sing-box
+      - name: Install Xray-core
         shell: bash
         run: |
           set -euo pipefail
-          api="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
-          url=$(curl -fsSL "$api" | jq -r '.assets[].browser_download_url | select(test("linux-amd64.tar.gz$"))' | head -n 1)
+          api="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
+          url=$(curl -fsSL "$api" | jq -r '.assets[].browser_download_url | select(test("Xray-linux-64.zip$"))' | head -n 1)
           test -n "$url"
-          curl -fsSL "$url" -o /tmp/sing-box.tar.gz
-          mkdir -p /tmp/sing-box
-          tar -xzf /tmp/sing-box.tar.gz -C /tmp/sing-box --strip-components=1
-          sudo install /tmp/sing-box/sing-box /usr/local/bin/sing-box
-          sing-box version
+          curl -fsSL "$url" -o /tmp/xray.zip
+          mkdir -p /tmp/xray
+          unzip -q /tmp/xray.zip xray -d /tmp/xray
+          sudo install /tmp/xray/xray /usr/local/bin/xray
+          xray version
 
-      - name: Select 22 fastest reliable nodes
+      - name: Select 5 fastest and most reliable nodes
         shell: bash
         run: |
           python3 <<'PY'
@@ -55,7 +55,12 @@ jobs:
           SOURCE = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
           TARGET = pathlib.Path("zhi839033")
           REQUIRED = 5
-          TEST_URL = "https://www.gstatic.com/generate_204"
+          TESTS = (
+              ("https://www.gstatic.com/generate_204", "204"),
+              ("https://cp.cloudflare.com/generate_204", "204"),
+              ("https://www.google.com/generate_204", "204"),
+          )
+          ROUNDS = 3
 
           request = urllib.request.Request(SOURCE, headers={"User-Agent": "GitHub-Actions"})
           with urllib.request.urlopen(request, timeout=60) as response:
@@ -75,56 +80,69 @@ jobs:
 
               local_port = free_port()
               config = {
-                  "log": {"level": "error"},
+                  "log": {"loglevel": "none"},
                   "inbounds": [{
-                      "type": "socks",
-                      "tag": "in",
                       "listen": "127.0.0.1",
-                      "listen_port": local_port
+                      "port": local_port,
+                      "protocol": "socks",
+                      "settings": {"udp": False}
                   }],
                   "outbounds": [{
-                      "type": "trojan",
-                      "tag": "proxy",
-                      "server": parsed.hostname,
-                      "server_port": parsed.port,
-                      "password": urllib.parse.unquote(parsed.username),
-                      "tls": {
-                          "enabled": True,
-                          "server_name": parsed.hostname,
-                          "insecure": False
+                      "protocol": "trojan",
+                      "settings": {
+                          "servers": [{
+                              "address": parsed.hostname,
+                              "port": parsed.port,
+                              "password": urllib.parse.unquote(parsed.username)
+                          }]
+                      },
+                      "streamSettings": {
+                          "network": "tcp",
+                          "security": "tls",
+                          "tlsSettings": {
+                              "serverName": parsed.hostname,
+                              "allowInsecure": False
+                          }
                       }
-                  }],
-                  "route": {"final": "proxy"}
+                  }]
               }
 
               with tempfile.TemporaryDirectory() as directory:
                   config_path = pathlib.Path(directory) / "config.json"
                   config_path.write_text(json.dumps(config), encoding="utf-8")
                   process = subprocess.Popen(
-                      ["sing-box", "run", "-c", str(config_path)],
+                      ["xray", "run", "-config", str(config_path)],
                       stdout=subprocess.DEVNULL,
                       stderr=subprocess.DEVNULL
                   )
                   try:
-                      time.sleep(0.35)
+                      time.sleep(0.45)
                       delays = []
-                      for _ in range(2):
-                          started = time.monotonic()
-                          result = subprocess.run(
-                              [
-                                  "curl", "-fsS", "--max-time", "7",
-                                  "--socks5-hostname", f"127.0.0.1:{local_port}",
-                                  "-o", "/dev/null", "-w", "%{http_code}",
-                                  TEST_URL
-                              ],
-                              capture_output=True,
-                              text=True,
-                              timeout=9
-                          )
-                          if result.returncode != 0 or result.stdout.strip() != "204":
-                              return None
-                          delays.append((time.monotonic() - started) * 1000)
-                      return statistics.median(delays), node
+                      for _ in range(ROUNDS):
+                          for url, expected in TESTS:
+                              started = time.monotonic()
+                              result = subprocess.run(
+                                  [
+                                      "curl", "-fsS", "--max-time", "8",
+                                      "--connect-timeout", "5",
+                                      "--socks5-hostname", f"127.0.0.1:{local_port}",
+                                      "-o", "/dev/null", "-w", "%{http_code}",
+                                      url
+                                  ],
+                                  capture_output=True,
+                                  text=True,
+                                  timeout=10
+                              )
+                              if result.returncode != 0 or result.stdout.strip() != expected:
+                                  return None
+                              delays.append((time.monotonic() - started) * 1000)
+
+                      ordered = sorted(delays)
+                      p90 = ordered[max(0, int(len(ordered) * 0.9) - 1)]
+                      median = statistics.median(delays)
+                      jitter = statistics.pstdev(delays)
+                      score = p90 + jitter * 0.5
+                      return score, median, p90, jitter, node
                   except (OSError, subprocess.TimeoutExpired):
                       return None
                   finally:
@@ -135,23 +153,27 @@ jobs:
                           process.kill()
 
           results = []
-          with ThreadPoolExecutor(max_workers=8) as executor:
+          with ThreadPoolExecutor(max_workers=6) as executor:
               futures = [executor.submit(test_node, node) for node in nodes]
               for future in as_completed(futures):
                   result = future.result()
                   if result:
                       results.append(result)
-                      print(f"Passed: {result[0]:.0f} ms", flush=True)
+                      print(
+                          f"Passed 9/9: median={result[1]:.0f} ms "
+                          f"p90={result[2]:.0f} ms jitter={result[3]:.0f} ms",
+                          flush=True
+                      )
 
           results.sort(key=lambda item: item[0])
           if len(results) < REQUIRED:
-              raise SystemExit(f"Only {len(results)} nodes passed two proxy tests; {REQUIRED} required")
+              raise SystemExit(f"Only {len(results)} nodes passed all 9 proxy requests; {REQUIRED} required")
 
-          selected = [node for _, node in results[:REQUIRED]]
+          selected = [item[4] for item in results[:REQUIRED]]
           output = "\n".join(selected) + "\n"
           TARGET.write_text(base64.b64encode(output.encode()).decode() + "\n", encoding="utf-8")
-          print(f"Selected fastest {REQUIRED} of {len(results)} reliable nodes")
-          print(f"Latency range: {results[0][0]:.0f}-{results[REQUIRED - 1][0]:.0f} ms")
+          print(f"Selected best {REQUIRED} of {len(results)} nodes that passed 9/9 requests")
+          print(f"Selected score range: {results[0][0]:.0f}-{results[REQUIRED - 1][0]:.0f}")
           PY
 
       - name: Commit changes
@@ -164,6 +186,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "zhi839033"
-          git commit -m "Update zhi839033 with fastest reliable nodes"
+          git commit -m "Update zhi839033 with Xray reliability tests"
           git push origin "HEAD:refs/heads/2024/3"
   
