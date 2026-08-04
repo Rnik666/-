@@ -19,7 +19,7 @@ jobs:
       - name: Checkout 2024 branch
         uses: actions/checkout@v4
         with:
-          ref: "2024"
+          ref: "2024/3"
           fetch-depth: 0
 
       - name: Select 22 random reachable nodes
@@ -35,7 +35,7 @@ jobs:
           from concurrent.futures import ThreadPoolExecutor, as_completed
 
           source_url = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-          target = pathlib.Path("3/WMZ-7")
+          target = pathlib.Path("WMZ-7")
           required = 22
 
           request = urllib.request.Request(source_url, headers={"User-Agent": "GitHub-Actions"})
@@ -84,13 +84,13 @@ jobs:
       - name: Commit changes
         shell: bash
         run: |
-          if git diff --quiet -- "3/WMZ-7"; then
+          if git diff --quiet -- "WMZ-7"; then
             echo "No changes"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "3/WMZ-7"
+          git add "WMZ-7"
           git commit -m "Auto update WMZ-7 with random reachable nodes"
-          git push origin HEAD:2024
+          git push origin "HEAD:refs/heads/2024/3"
   
