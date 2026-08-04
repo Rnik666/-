@@ -22,16 +22,21 @@ jobs:
           ref: "2024"
           fetch-depth: 0
 
-      - name: Extract 22 nodes
+      - name: Select 22 random reachable nodes
         shell: bash
         run: |
           python3 <<'PY'
           import base64
           import pathlib
+          import random
+          import socket
+          import urllib.parse
           import urllib.request
+          from concurrent.futures import ThreadPoolExecutor, as_completed
 
           source_url = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
           target = pathlib.Path("3/WMZ-7")
+          required = 22
 
           request = urllib.request.Request(source_url, headers={"User-Agent": "GitHub-Actions"})
           with urllib.request.urlopen(request, timeout=60) as response:
@@ -42,14 +47,38 @@ jobs:
           except Exception as error:
               raise SystemExit(f"Invalid Base64 subscription: {error}")
 
-          nodes = [line.strip() for line in decoded.splitlines() if line.strip()]
-          if len(nodes) < 22:
-              raise SystemExit(f"Only {len(nodes)} nodes found; 22 required")
+          nodes = list(dict.fromkeys(line.strip() for line in decoded.splitlines() if line.strip()))
+          random.SystemRandom().shuffle(nodes)
 
-          output = "\n".join(nodes[:22]) + "\n"
-          target.parent.mkdir(parents=True, exist_ok=True)
+          def endpoint(node):
+              parsed = urllib.parse.urlsplit(node)
+              if not parsed.hostname or not parsed.port:
+                  raise ValueError("missing host or port")
+              return parsed.hostname, parsed.port
+
+          def reachable(node):
+              try:
+                  host, port = endpoint(node)
+                  with socket.create_connection((host, port), timeout=4):
+                      return node
+              except (OSError, ValueError):
+                  return None
+
+          available = []
+          with ThreadPoolExecutor(max_workers=30) as executor:
+              futures = [executor.submit(reachable, node) for node in nodes]
+              for future in as_completed(futures):
+                  node = future.result()
+                  if node:
+                      available.append(node)
+
+          if len(available) < required:
+              raise SystemExit(f"Only {len(available)} reachable nodes; {required} required")
+
+          selected = random.SystemRandom().sample(available, required)
+          output = "\n".join(selected) + "\n"
           target.write_text(base64.b64encode(output.encode()).decode() + "\n", encoding="utf-8")
-          print(f"Selected 22 of {len(nodes)} nodes")
+          print(f"Selected {required} random nodes from {len(available)} TCP-reachable nodes")
           PY
 
       - name: Commit changes
@@ -62,5 +91,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "3/WMZ-7"
-          git commit -m "Auto update WMZ-7 nodes"
+          git commit -m "Auto update WMZ-7 with random reachable nodes"
           git push origin HEAD:2024
+  
