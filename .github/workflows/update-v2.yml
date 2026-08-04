@@ -38,7 +38,9 @@ jobs:
           sudo install /tmp/xray/xray /usr/local/bin/xray
 
       - name: Collect three times and test TCP nodes
-        run: python3 scripts/collect_v2_tcp.py
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/collect_v2_tcp.py" -o /tmp/collect_v2_tcp.py
+          python3 /tmp/collect_v2_tcp.py
 
       - name: Commit changes
         run: |
