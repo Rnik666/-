@@ -1,1 +1,54 @@
-name: Update -V2 TCP nodeson:  workflow_dispatch:  schedule:    - cron: "5,25,45 * * * *"→ Runs at 17, 37, and 57 minutes past the hourpermissions:  contents: writeconcurrency:  group: update-v2-tcp  cancel-in-progress: truejobs:  update:    runs-on: ubuntu-latest    timeout-minutes: 25    env:      STARVPN_AES_KEY: ${{ secrets.STARVPN_AES_KEY }}      STARVPN_AES_IV: ${{ secrets.STARVPN_AES_IV }}      STARVPN_ACCOUNT_ID: ${{ secrets.STARVPN_ACCOUNT_ID }}    steps:      - name: Checkout target branch        uses: actions/checkout@v4        with:          ref: "2024/3"          fetch-depth: 0      - name: Install dependencies        run: |          python3 -m pip install --quiet pycryptodome          api="https://api.github.com/repos/XTLS/Xray-core/releases/latest"          url=$(curl -fsSL "$api" | jq -r '.assets[].browser_download_url | select(test("Xray-linux-64.zip$"))' | head -n 1)          curl -fsSL "$url" -o /tmp/xray.zip          mkdir -p /tmp/xray  
+name: Update -V2 TCP nodes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17,37,57 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-v2-tcp
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      STARVPN_AES_KEY: ${{ secrets.STARVPN_AES_KEY }}
+      STARVPN_AES_IV: ${{ secrets.STARVPN_AES_IV }}
+      STARVPN_ACCOUNT_ID: ${{ secrets.STARVPN_ACCOUNT_ID }}
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          ref: "2024/3"
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --quiet pycryptodome
+          api="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
+          url=$(curl -fsSL "$api" | jq -r '.assets[].browser_download_url | select(test("Xray-linux-64.zip$"))' | head -n 1)
+          curl -fsSL "$url" -o /tmp/xray.zip
+          mkdir -p /tmp/xray
+          unzip -q /tmp/xray.zip xray -d /tmp/xray
+          sudo install /tmp/xray/xray /usr/local/bin/xray
+
+      - name: Collect three times and test TCP nodes
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/collect_v2_tcp.py" -o /tmp/collect_v2_tcp.py
+          python3 /tmp/collect_v2_tcp.py
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet -- "-V2"; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "-V2"
+          git commit -m "Update -V2 with tested TCP nodes"
+          git push origin "HEAD:refs/heads/2024/3"
+  
+  
