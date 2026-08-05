@@ -1,36 +1,88 @@
-#!/usr/bin/env python3
-import json,os,pathlib,socket,subprocess,tempfile,time,urllib.parse,statistics
-from concurrent.futures import ThreadPoolExecutor,as_completed
-SRC=pathlib.Path("/tmp/v2-candidates.txt");OUT=pathlib.Path("/tmp/v2-tested.txt")
-env={}
-for line in pathlib.Path("/root/.config/github-v2/cn-proxy.env").read_text().splitlines():
- if "=" in line:
-  k,v=line.split("=",1);env[k]=v
-cn=urllib.parse.urlsplit(env["CN_PROXY"])
-nodes=list(dict.fromkeys(x.strip() for x in SRC.read_text().splitlines() if x.strip().startswith("trojan://")))
-def port():
- s=socket.socket();s.bind(("127.0.0.1",0));p=s.getsockname()[1];s.close();return p
-def req(proxy,*args,timeout=20):
- return subprocess.run(["curl","-4fsS","--proxy",proxy,"--max-time",str(timeout),"--connect-timeout","8",*args],capture_output=True,text=True,timeout=timeout+2)
-def test(node):
- u=urllib.parse.urlsplit(node)
- if not u.hostname or not u.port or not u.username:return None
- p=port();proxy=f"socks5h://127.0.0.1:{p}"
- cand={"tag":"candidate","protocol":"trojan","settings":{"servers":[{"address":u.hostname,"port":u.port,"password":urllib.parse.unquote(u.username)}]},"streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":u.hostname,"allowInsecure":False}},"proxySettings":{"tag":"cn","transportLayer":true}}
- cnout={"tag":"cn","protocol":"trojan","settings":{"servers":[{"address":cn.hostname,"port":cn.port,"password":urllib.parse.unquote(cn.username)}]},"streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":urllib.parse.parse_qs(cn.query).get("peer",[cn.hostname])[0],"allowInsecure":urllib.parse.parse_qs(cn.query).get("allowInsecure",["0"])[0]=="1"}}}
- cfg={"log":{"loglevel":"none"},"inbounds":[{"listen":"127.0.0.1","port":p,"protocol":"socks","settings":{"udp":False}}],"outbounds":[cand,cnout],"routing":{"rules":[{"type":"field","inboundTag":[],"outboundTag":"candidate"}]}}
- with tempfile.TemporaryDirectory() as d:
-  f=pathlib.Path(d)/"c.json";f.write_text(json.dumps(cfg));q=subprocess.Popen(["xray","run","-config",str(f)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-  try:
-   time.sleep(1.2);ips=[];scores=[]
-   for n in range(3):
-    t=time.monotonic();r=req(proxy,"-o","/dev/null","-w","%{http_code}","https://www.gstatic.com/generate_204")
-    if r.returncode or r.stdout.strip()!="204":return None
-    ip=req(proxy,"https://api.ipify.org").stdout.strip()
-    if not ip:return None
-    dload=req(proxy,"-o","/dev/null","-w","%{http_code}:%{size_download}","https://speed.cloudflare.com/__down?bytes=262144",timeout=25)
-    if dload.returncode:return None
-    code,size=(dload.stdout.strip().split(":",1)+["0"])[:2]
-    if code!="200" or int(float(size))<262144:return None
-    ips.append(ip);scores.append((time.monotonic()-t)*1000)
-    if n<2:time.sleep(4)
+�r�^�f��ئ{Kr�ݰ뭦�H�K�\܋ؚ[��[��]ی[\ܝ��ۋ��]X�����]�X����\��[\�[K[YK\�X��\��K�]\�X����H�ۘ�\��[���]\�\�[\ܝ�XY��^X�]܋\����\]Y�Ԑ�\]X��]
+��\݌�X�[�Y]\˝�N��U\]X��]
+��\݌�]\�Y��B�[��^�B��܈[�H[�]X��]
+�ܛ��˘�ۙ�Y���]X�]���ۋ\��K�[���K��XY�^
+
+K��][�\�
+N��Y��H�[�[�N����[[�K��]
+�H�JN�[����O]��ۏ]\�X��\��K�\��]
+[��Ȑӗ���H�JB���\�[\�
+X�����Z�^\����\
+
+H�܈[�Ԑ˜�XY�^
+
+K��][�\�
+HY����\
+
+K��\���]
+��ژ[���ȊJJB�Y�ܝ
+
+N���\����]�����]
+
+N�˘�[�
+
+�L�ˌ��H�
+JN�\˙�]���ۘ[YJ
+V�WN�˘���J
+Nܙ]\���Y��\J��K
+�\���[Y[�]L�
+N���]\���X����\�˜�[�Ș�\���M��ȋ�K\��H���K�K[X^][YH���[Y[�]
+K�KX�ۛ�X�][Y[�]���
+�\���K�\\�W��]]U�YK^U�YK[Y[�]][Y[�]
+̊B�Y�\�
+��JN��O]\�X��\��K�\��]
+��JB�Y���K����[YH܈��K�ܝ܈��K�\�\��[YN��]\���ۙB�\ܝ
+
+N���OY�������Z���L�ˌ��N��H���[�^ȝYȎ���[�Y]H�����������ژ[����][��Ȏ�Ȝ�\��\�Ȏ��ȘY�\�Ȏ�K����[YK�ܝ��K�ܝ�\���ܙ��\�X��\��K�[�][�JK�\�\��[YJ_W_K���X[T�][��Ȏ�ț�]�ܚȎ������X�\�]H���ȋ���][��Ȏ�Ȝ�\��\��[YH��K����[YK�[��[��X�\�H���[�__K���T�][��Ȏ�ȝYȎ��ۈ���[��ܝ^Y\����Y__B�ۛ�]^ȝYȎ��ۈ�����������ژ[����][��Ȏ�Ȝ�\��\�Ȏ��ȘY�\�Ȏ�ۋ����[YK�ܝ��ۋ�ܝ�\���ܙ��\�X��\��K�[�][�Jۋ�\�\��[YJ_W_K���X[T�][��Ȏ�ț�]�ܚȎ������X�\�]H���ȋ���][��Ȏ�Ȝ�\��\��[YH��\�X��\��K�\��W�\�ۋ�]Y\�JK��]
+�Y\���ۋ����[YWJV�K�[��[��X�\�H��\�X��\��K�\��W�\�ۋ�]Y\�JK��]
+�[��[��X�\�H�Ȍ�JV�OOH�H�__B�ٙ�^ț�Ȏ�ț��]�[����ۙH�K�[���[�Ȏ��ț\�[����L�ˌ��H��ܝ���������������ȋ��][��Ȏ�ȝY���[�__WK��]��[�Ȏ���[�ۛ�]K���][�Ȏ�Ȝ�[\Ȏ��ȝ\H����Y[��[���[�YȎ��K��]��[�YȎ���[�Y]H�W__B��][\�[K�[\ܘ\�Q\�X�ܞJ
+H\����\]X��]
+
+KȘ˚��ۈ�ً�ܚ]W�^
+��ۋ�[\�ٙ�JN�O\�X����\�˔�[�Ȟ�^H���[���X�ۙ�Yȋ���WK��]\�X����\�ˑU��S�\��\�X����\�ˑU��S
+B��N��[YK��Y\
+K��N�\�V�N���ܙ\�V�B��܈�[��[��J�N��][YK�[ۛ�ۚX�
+N܏\�\J��K�[ȋ��]�۝[��]ȋ�^����_H��΋����˙��]X˘��K��[�\�]W̌
+�B�Y����]\����H܈����]���\
+
+HOH��
+���]\���ۙB�\\�\J��K�΋��\K�\Y�K�ܙȊK���]���\
+
+B�Y���\��]\���ۙB��Y\�\J��K�[ȋ��]�۝[��]ȋ�^����_N�^��^�W��ۛ�YH��΋���YY���Y�\�K���K����ۏ؞]\�L���M
+�[Y[�]L�JB�Y��Y��]\����N��]\���ۙB���K�^�OJ�Y���]���\
+
+K��]
+���JJ�Ȍ�JVΌ�B�Y���HOH���܈[�
+��]
+�^�JJO���M
+��]\���ۙB�\˘\[�
+\
+N���ܙ\˘\[�
+
+[YK�[ۛ�ۚX�
+K]
+J�L
+B�Y����[YK��Y\
+
+B�Y�[��]
+\�JHOLN��]\���ۙB��\�O[��K��]
+�ȋJV�K��]
+�ȋJV�N�]Y\�O]\�X��\��K�\�[���JȜ�X�\�]H���ȋ�\H������XY\�\H����ۙH��ۚH��K����[Y_JB��]\���]\�X�˛YYX[���ܙ\�K��ؘ\�_O��]Y\�_H�\��B�^�\^�\[ێ��]\���ۙB��[�[N��K�\�Z[�]J
+B��N�K��Z]
+[Y[�]L�B�^�\�X����\�˕[Y[�]^\�Y�K��[
+
+B��[�
+�ӋX�Z[���X�\�[�ȋ[���\�K���\ȋ�\�U�YJB�\��YV�B��]�XY��^X�]܊X^��ܚ�\��L�H\�^���܈�[�\����\]Y
+�^��X�Z]
+\��H�܈�[���\�JN���Y���\�[
+
+B�Y���\��Y�\[�
+�N��[�
+�ӈ�PST�ȋ�̗K�\�U�YJB�\��Y��ܝ
+
+B��U�ܚ]W�^
+������[��و��QM�NM�P�	QMINIPL	QMINQ	PLIL��_H��܈K
+���H[�[�[Y\�]J\��YJJJ����Y�\��Y[�H��JB��[�
+�ӈ��X�\��Y�[�\��Y
+K�و�[���\�K�\�U�YJB�Y���\��Y��Z\�H�\�[Q^]
+�����H\��Y��U���\�\��Y�B
