@@ -3,7 +3,7 @@ name: Update -V2 TCP nodes
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17,37,57 * * * *"
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
