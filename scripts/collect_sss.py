@@ -102,12 +102,26 @@ if len(KEY) not in (16, 24, 32) or len(IV) != 16:
     raise SystemExit("Invalid secret lengths")
 
 candidates = []
+if TARGET.exists():
+    try:
+        previous = base64.b64decode(TARGET.read_text().strip()).decode().splitlines()
+        candidates.extend(line.split("#", 1)[0] for line in previous if line.startswith("trojan://"))
+        print(f"Loaded {len(candidates)} previous SSS candidates", flush=True)
+    except Exception as exc:
+        print(f"Ignored invalid previous SSS: {exc}", flush=True)
+
 for run in range(1, 6):
     candidates.extend(collect_once(run))
 candidates = list(dict.fromkeys(candidates))
 if not candidates:
     raise SystemExit("No candidates collected; old SSS preserved")
 
-output = "\n".join(candidates) + "\n"
+renamed = []
+for index, node in enumerate(candidates, 1):
+    base = node.split("#", 1)[0]
+    label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
+    renamed.append(f"{base}#{label}")
+
+output = "\n".join(renamed) + "\n"
 TARGET.write_text(base64.b64encode(output.encode()).decode() + "\n")
-print(f"Saved {len(candidates)} unique TCP candidates to SSS")
+print(f"Saved {len(renamed)} cumulative unique TCP candidates to SSS")
