@@ -1,0 +1,43 @@
+name: Collect SSS candidates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-sss-candidates
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      STARVPN_AES_KEY: ${{ secrets.STARVPN_AES_KEY }}
+      STARVPN_AES_IV: ${{ secrets.STARVPN_AES_IV }}
+      STARVPN_ACCOUNT_ID: ${{ secrets.STARVPN_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: "2024/3"
+          fetch-depth: 0
+
+      - run: python3 -m pip install --quiet pycryptodome
+
+      - name: Collect five times into SSS
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/collect_sss.py" -o /tmp/collect_sss.py
+          python3 /tmp/collect_sss.py
+
+      - name: Commit SSS
+        run: |
+          if git diff --quiet -- SSS; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SSS
+          git commit -m "Collect five SSS candidate batches"
+          git push origin "HEAD:refs/heads/2024/3"
