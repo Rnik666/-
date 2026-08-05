@@ -16,7 +16,7 @@ def test(node):
  u=urllib.parse.urlsplit(node)
  if not u.hostname or not u.port or not u.username:return None
  p=port();proxy=f"socks5h://127.0.0.1:{p}"
- cand={"tag":"candidate","protocol":"trojan","settings":{"servers":[{"address":u.hostname,"port":u.port,"password":urllib.parse.unquote(u.username)}]},"streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":u.hostname,"allowInsecure":False}},"proxySettings":{"tag":"cn"}}
+ cand={"tag":"candidate","protocol":"trojan","settings":{"servers":[{"address":u.hostname,"port":u.port,"password":urllib.parse.unquote(u.username)}]},"streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":u.hostname,"allowInsecure":False}},"proxySettings":{"tag":"cn","transportLayer":true}}
  cnout={"tag":"cn","protocol":"trojan","settings":{"servers":[{"address":cn.hostname,"port":cn.port,"password":urllib.parse.unquote(cn.username)}]},"streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":urllib.parse.parse_qs(cn.query).get("peer",[cn.hostname])[0],"allowInsecure":urllib.parse.parse_qs(cn.query).get("allowInsecure",["0"])[0]=="1"}}}
  cfg={"log":{"loglevel":"none"},"inbounds":[{"listen":"127.0.0.1","port":p,"protocol":"socks","settings":{"udp":False}}],"outbounds":[cand,cnout],"routing":{"rules":[{"type":"field","inboundTag":[],"outboundTag":"candidate"}]}}
  with tempfile.TemporaryDirectory() as d:
@@ -34,21 +34,3 @@ def test(node):
     if code!="200" or int(float(size))<262144:return None
     ips.append(ip);scores.append((time.monotonic()-t)*1000)
     if n<2:time.sleep(4)
-   if len(set(ips))!=1:return None
-   base=node.split("#",1)[0].split("?",1)[0];query=urllib.parse.urlencode({"security":"tls","type":"tcp","headerType":"none","sni":u.hostname})
-   return statistics.median(scores),f"{base}?{query}",ips[0]
-  except Exception:return None
-  finally:
-   q.terminate()
-   try:q.wait(timeout=2)
-   except subprocess.TimeoutExpired:q.kill()
-print("CN-chain strict testing",len(nodes),"nodes",flush=True)
-passed=[]
-with ThreadPoolExecutor(max_workers=3) as ex:
- for f in as_completed([ex.submit(test,n) for n in nodes]):
-  r=f.result()
-  if r:passed.append(r);print("CN REAL PASS",r[2],flush=True)
-passed.sort()
-OUT.write_text("\n".join(n+f"#%E6%96%B0%E5%8A%A0%E5%9D%A1%20{i}" for i,(_,n,_) in enumerate(passed,1))+("\n" if passed else ""))
-print("CN strict passed",len(passed),"of",len(nodes),flush=True)
-if not passed:raise SystemExit("no node passed; old -V2 preserved")
