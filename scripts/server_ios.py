@@ -13,9 +13,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 REPO = "Rnik666/-"
 BRANCH = "2024/3"
-SOURCE_URL = "https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-TARGET = "-ios"
-LIMIT = 10
+SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
+TARGETS_FILE = pathlib.Path("/root/.config/github-ios/targets.conf")
 
 
 def free_port():
@@ -127,30 +126,57 @@ with ThreadPoolExecutor(max_workers=6) as executor:
             print(f"PASS {result[0]:.0f}ms", flush=True)
 
 passed.sort(key=lambda item: item[0])
-selected = passed[:LIMIT]
-if not selected:
-    raise SystemExit("No node passed; old -ios preserved")
+if not passed:
+    raise SystemExit("No node passed; all target files preserved")
 
-links = []
-for index, (_, node) in enumerate(selected, 1):
-    label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
-    links.append(f"{node}#{label}")
-subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
+
+def load_targets():
+    targets = []
+    for number, raw_line in enumerate(TARGETS_FILE.read_text().splitlines(), 1):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            raise RuntimeError(f"Invalid targets.conf line {number}: {raw_line}")
+        target, count = line.rsplit("=", 1)
+        target = target.strip()
+        count = int(count.strip())
+        if not target or "/" in target or count < 1:
+            raise RuntimeError(f"Invalid targets.conf line {number}: {raw_line}")
+        targets.append((target, count))
+    if not targets:
+        raise RuntimeError("targets.conf has no targets")
+    return targets
+
+
+def publish(target, requested, token):
+    selected = passed[:requested]
+    links = []
+    for index, (_, node) in enumerate(selected, 1):
+        label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
+        links.append(f"{node}#{label}")
+    subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
+    encoded_target = urllib.parse.quote(target, safe="")
+    path_url = f"https://api.github.com/repos/{REPO}/contents/{encoded_target}"
+    try:
+        current = api_request(f"{path_url}?ref={urllib.parse.quote(BRANCH, safe='')}", token)
+        sha = current.get("sha")
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
+        sha = None
+    payload = {
+        "message": f"Update {target} with {len(links)} server-tested nodes",
+        "content": base64.b64encode(subscription.encode()).decode(),
+        "branch": BRANCH,
+    }
+    if sha:
+        payload["sha"] = sha
+    result = api_request(path_url, token, "PUT", json.dumps(payload).encode())
+    print(f"Uploaded {len(links)}/{requested} nodes to {BRANCH}/{target}")
+    print(result.get("commit", {}).get("html_url", ""))
+
 
 token = github_token()
-path_url = f"https://api.github.com/repos/{REPO}/contents/{TARGET}"
-try:
-    current = api_request(f"{path_url}?ref={urllib.parse.quote(BRANCH, safe='')}", token)
-    sha = current.get("sha")
-except urllib.error.HTTPError as error:
-    if error.code != 404:
-        raise
-    sha = None
-payload = {"message": f"Update {TARGET} with {len(links)} server-tested nodes",
-           "content": base64.b64encode(subscription.encode()).decode(),
-           "branch": BRANCH}
-if sha:
-    payload["sha"] = sha
-result = api_request(path_url, token, "PUT", json.dumps(payload).encode())
-print(f"Uploaded {len(links)} nodes to {BRANCH}/{TARGET}")
-print(result.get("commit", {}).get("html_url", ""))
+for target, requested in load_targets():
+    publish(target, requested, token)
