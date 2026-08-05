@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 REPO = "Rnik666/-"
 BRANCH = "2024/3"
 SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-TARGETS_FILE = pathlib.Path("/root/.config/github-ios/targets.conf")
+TARGETS_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/config/targets.conf"
 
 
 def free_port():
@@ -132,7 +132,8 @@ if not passed:
 
 def load_targets():
     targets = []
-    for number, raw_line in enumerate(TARGETS_FILE.read_text().splitlines(), 1):
+    config_text = urllib.request.urlopen(TARGETS_URL, timeout=30).read().decode()
+    for number, raw_line in enumerate(config_text.splitlines(), 1):
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
