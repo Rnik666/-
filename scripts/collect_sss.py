@@ -115,8 +115,8 @@ for run in range(1, 6):
 candidates = list(dict.fromkeys(candidates))
 if not candidates:
     raise SystemExit("No candidates collected; old SSS preserved")
-if len(candidates) > 200:
-    candidates = candidates[-200:]
+if len(candidates) > 100:
+    candidates = candidates[-100:]
 
 renamed = []
 for index, node in enumerate(candidates, 1):
