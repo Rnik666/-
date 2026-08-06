@@ -129,6 +129,17 @@ passed.sort(key=lambda item: item[0])
 if not passed:
     raise SystemExit("No node passed; all target files preserved")
 
+# Different source links can normalize to the same tested URI. Keep only the
+# fastest result for each final URI before assigning disjoint target slices.
+unique_passed = []
+seen_nodes = set()
+for delay, node in passed:
+    if node in seen_nodes:
+        continue
+    seen_nodes.add(node)
+    unique_passed.append((delay, node))
+passed = unique_passed
+
 
 def load_targets():
     targets = []
@@ -150,8 +161,7 @@ def load_targets():
     return targets
 
 
-def publish(target, requested, token):
-    selected = passed[:requested]
+def publish(target, requested, selected, token):
     links = []
     for index, (_, node) in enumerate(selected, 1):
         label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
@@ -179,5 +189,11 @@ def publish(target, requested, token):
 
 
 token = github_token()
+offset = 0
 for target, requested in load_targets():
-    publish(target, requested, token)
+    selected = passed[offset:offset + requested]
+    if not selected:
+        print(f"Skipped {target}: no unused tested nodes remain", flush=True)
+        continue
+    publish(target, requested, selected, token)
+    offset += len(selected)
