@@ -80,7 +80,10 @@ def test_node(node):
             base = node.split("#", 1)[0].split("?", 1)[0]
             query = urllib.parse.urlencode({"security": "tls", "type": "tcp",
                                             "headerType": "none", "sni": parsed.hostname})
-            return statistics.median(delays), f"{base}?{query}"
+            median_ms = statistics.median(delays)
+            jitter_ms = max(delays) - min(delays)
+            score_ms = median_ms + jitter_ms * 0.5
+            return score_ms, f"{base}?{query}"
         except Exception:
             return None
         finally:
