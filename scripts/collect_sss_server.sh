@@ -6,7 +6,7 @@ BASE=/root/.config/github-sss
 WORK="$(mktemp -d)"
 API='https://api.github.com/repos/Rnik666/-/contents/SSS'
 BRANCH='2024/3'
-MAX_NODES=120
+MAX_NODES=80
 
 trap 'rm -rf "$WORK"' EXIT
 
