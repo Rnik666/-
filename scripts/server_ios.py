@@ -113,37 +113,6 @@ def api_request(url, token, method="GET", data=None):
         return json.loads(response.read() or b"{}")
 
 
-raw = urllib.request.urlopen(SOURCE_URL, timeout=30).read()
-decoded = base64.b64decode(raw).decode()
-candidates = list(dict.fromkeys(line.strip() for line in decoded.splitlines()
-                                if line.strip().startswith("trojan://")))
-print(f"Testing {len(candidates)} SSS candidates", flush=True)
-
-passed = []
-with ThreadPoolExecutor(max_workers=6) as executor:
-    futures = [executor.submit(test_node, node) for node in candidates]
-    for future in as_completed(futures):
-        result = future.result()
-        if result:
-            passed.append(result)
-            print(f"PASS {result[0]:.0f}ms", flush=True)
-
-passed.sort(key=lambda item: item[0])
-if not passed:
-    raise SystemExit("No node passed; all target files preserved")
-
-# Different source links can normalize to the same tested URI. Keep only the
-# fastest result for each final URI before assigning disjoint target slices.
-unique_passed = []
-seen_nodes = set()
-for delay, node in passed:
-    if node in seen_nodes:
-        continue
-    seen_nodes.add(node)
-    unique_passed.append((delay, node))
-passed = unique_passed
-
-
 def load_targets():
     targets = []
     config_text = urllib.request.urlopen(TARGETS_URL, timeout=30).read().decode()
@@ -167,7 +136,7 @@ def load_targets():
 def publish(target, requested, selected, token):
     links = []
     for index, (_, node) in enumerate(selected, 1):
-        label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
+        label = urllib.parse.quote(f"ð¸ð¬æ°å å¡{index}", safe="")
         links.append(f"{node}#{label}")
     subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
     encoded_target = urllib.parse.quote(target, safe="")
@@ -191,12 +160,68 @@ def publish(target, requested, selected, token):
     print(result.get("commit", {}).get("html_url", ""))
 
 
-token = github_token()
-offset = 0
-for target, requested in load_targets():
-    selected = passed[offset:offset + requested]
-    if not selected:
-        print(f"Skipped {target}: no unused tested nodes remain", flush=True)
-        continue
-    publish(target, requested, selected, token)
-    offset += len(selected)
+def run_once():
+    raw = urllib.request.urlopen(SOURCE_URL, timeout=30).read()
+    decoded = base64.b64decode(raw).decode()
+    candidates = list(dict.fromkeys(
+        line.strip() for line in decoded.splitlines()
+        if line.strip().startswith("trojan://")
+    ))
+    print(f"Testing {len(candidates)} SSS candidates", flush=True)
+
+    passed = []
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        futures = [executor.submit(test_node, node) for node in candidates]
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                passed.append(result)
+                print(f"PASS {result[0]:.0f}ms", flush=True)
+
+    passed.sort(key=lambda item: item[0])
+
+    unique_passed = []
+    seen_nodes = set()
+    for score, node in passed:
+        if node in seen_nodes:
+            continue
+        seen_nodes.add(node)
+        unique_passed.append((score, node))
+    passed = unique_passed
+
+    targets = load_targets()
+    total_required = sum(requested for _, requested in targets)
+    if len(passed) < total_required:
+        raise RuntimeError(
+            f"only {len(passed)}/{total_required} unique nodes passed"
+        )
+
+    # Upload only after the whole round has enough disjoint nodes.
+    token = github_token()
+    offset = 0
+    for target, requested in targets:
+        selected = passed[offset:offset + requested]
+        publish(target, requested, selected, token)
+        offset += requested
+
+
+def main():
+    max_attempts = 2
+    for attempt in range(1, max_attempts + 1):
+        print(f"Full run attempt {attempt}/{max_attempts}", flush=True)
+        try:
+            run_once()
+            print("Full run completed", flush=True)
+            return 0
+        except Exception as error:
+            print(f"Full run failed: {error}", flush=True)
+            if attempt < max_attempts:
+                print("Retrying complete run in 10 seconds", flush=True)
+                time.sleep(10)
+
+    print("All attempts failed; existing subscriptions preserved", flush=True)
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
