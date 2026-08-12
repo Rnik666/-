@@ -136,7 +136,7 @@ def load_targets():
 def publish(target, requested, selected, token):
     links = []
     for index, (_, node) in enumerate(selected, 1):
-        label = urllib.parse.quote(f"ð¸ð¬æ°å å¡{index}", safe="")
+        label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
         links.append(f"{node}#{label}")
     subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
     encoded_target = urllib.parse.quote(target, safe="")
