@@ -7,21 +7,6 @@ if (( EUID != 0 )); then
 fi
 
 BASE=/root/.config/github-sss
-RAW_BASE='https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts'
-
-fetch_script() {
-  local name="$1"
-  local output="$2"
-  local nonce
-  nonce="$(date +%s)"
-
-  curl -fL --retry 10 --connect-timeout 15 \
-    "https://gh-proxy.com/$RAW_BASE/$name?t=$nonce" \
-    -o "$output" ||
-  curl -fL --retry 10 --connect-timeout 15 \
-    "$RAW_BASE/$name?t=$nonce" \
-    -o "$output"
-}
 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -41,24 +26,8 @@ if [[ "$GITHUB_TOKEN" != github_pat_* ]]; then
   exit 1
 fi
 
-fetch_script source_sss.py "$BASE/source_sss.py.ref"
-
-STARVPN_AES_KEY="$(sed -n 's/^AES_KEY *= *b"\([^"]*\)".*/\1/p' "$BASE/source_sss.py.ref" | head -n1)"
-STARVPN_AES_IV="$(sed -n 's/^AES_IV *= *b"\([^"]*\)".*/\1/p' "$BASE/source_sss.py.ref" | head -n1)"
-STARVPN_ACCOUNT_ID="$(sed -n 's/^DEFAULT_ACCOUNT *= *"\([^"]*\)".*/\1/p' "$BASE/source_sss.py.ref" | head -n1)"
-
-test -n "$STARVPN_AES_KEY"
-test -n "$STARVPN_AES_IV"
-test -n "$STARVPN_ACCOUNT_ID"
-rm -f "$BASE/source_sss.py.ref"
-
 umask 077
-{
-  printf 'export GITHUB_TOKEN=%q\n' "$GITHUB_TOKEN"
-  printf 'export STARVPN_AES_KEY=%q\n' "$STARVPN_AES_KEY"
-  printf 'export STARVPN_AES_IV=%q\n' "$STARVPN_AES_IV"
-  printf 'export STARVPN_ACCOUNT_ID=%q\n' "$STARVPN_ACCOUNT_ID"
-} > "$BASE/task.env"
+printf 'export GITHUB_TOKEN=%q\n' "$GITHUB_TOKEN" > "$BASE/task.env"
 chmod 600 "$BASE/task.env"
 
 cat > "$BASE/collect.sh" <<'RUN'
@@ -70,17 +39,18 @@ WORK="$(mktemp -d)"
 API='https://api.github.com/repos/Rnik666/-/contents/SSS'
 BRANCH='2024/3'
 REF='2024%2F3'
-RAW='https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/collect_sss.py'
+MAX_NODES=200
+RAW='https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/source_sss.py'
 
 trap 'rm -rf "$WORK"' EXIT
 source "$BASE/task.env"
 
 curl -fL --retry 10 --connect-timeout 15 \
   "https://gh-proxy.com/$RAW?t=$(date +%s)" \
-  -o "$WORK/collect_sss.py" ||
+  -o "$WORK/source.py" ||
 curl -fL --retry 10 --connect-timeout 15 \
   "$RAW?t=$(date +%s)" \
-  -o "$WORK/collect_sss.py"
+  -o "$WORK/source.py"
 
 curl -fsSL --retry 5 \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -90,13 +60,36 @@ curl -fsSL --retry 5 \
 SHA="$(jq -r '.sha // empty' "$WORK/github.json")"
 test -n "$SHA"
 jq -r '.content // empty' "$WORK/github.json" |
-  tr -d '\n' | base64 -d > "$WORK/SSS"
+  tr -d '\n' |
+  base64 -d |
+  base64 -d > "$WORK/old.txt" 2>/dev/null || true
 
-(cd "$WORK" && python3 collect_sss.py)
+echo "Existing nodes: $(grep -cve '^[[:space:]]*$' "$WORK/old.txt" || true)"
 
-CONTENT="$(base64 -w 0 "$WORK/SSS")"
+python3 "$WORK/source.py" \
+  --region "新加坡" \
+  --output-dir "$WORK/new" \
+  >/dev/null
+
+NEW_FILE="$WORK/new/trojan_uris_tcp.txt"
+test -s "$NEW_FILE"
+echo "New nodes: $(grep -cve '^[[:space:]]*$' "$NEW_FILE")"
+
+awk -v max="$MAX_NODES" '
+  NF && !seen[$0]++ {
+    print
+    count++
+    if (count >= max) exit
+  }
+' "$NEW_FILE" "$WORK/old.txt" > "$WORK/merged.txt"
+
+TOTAL="$(grep -cve '^[[:space:]]*$' "$WORK/merged.txt")"
+echo "Merged unique nodes: $TOTAL"
+
+base64 -w 0 "$WORK/merged.txt" > "$WORK/subscription.txt"
+CONTENT="$(base64 -w 0 "$WORK/subscription.txt")"
 jq -n \
-  --arg message "Update SSS from 5-minute server task" \
+  --arg message "Accumulate SSS nodes: $TOTAL" \
   --arg content "$CONTENT" \
   --arg branch "$BRANCH" \
   --arg sha "$SHA" \
@@ -109,6 +102,8 @@ curl -fsSL -X PUT \
   -H "Content-Type: application/json" \
   "$API" --data-binary @"$WORK/upload.json" |
   jq -er '.commit.html_url'
+
+echo "Uploaded $TOTAL unique nodes to $BRANCH/SSS"
 RUN
 
 chmod 700 "$BASE/collect.sh"
