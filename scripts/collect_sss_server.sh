@@ -66,7 +66,7 @@ jq -r '.content // empty' "$WORK/github.json" |
 
 echo "Existing nodes: $(grep -cve '^[[:space:]]*$' "$WORK/old.txt" || true)"
 
-python3 "$WORK/source.py" \
+/usr/bin/python3 "$WORK/source.py" \
   --region "新加坡" \
   --output-dir "$WORK/new" \
   >/dev/null
