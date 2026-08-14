@@ -10,9 +10,13 @@ BASE=/root/.config/github-sss
 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  curl jq cron util-linux coreutils ca-certificates python3 python3-pycryptodome
+  curl jq cron util-linux coreutils ca-certificates python3 python3-venv
 
 install -d -m 700 "$BASE"
+/usr/bin/python3 -m venv "$BASE/venv"
+"$BASE/venv/bin/python" -m pip install \
+  --disable-pip-version-check --no-cache-dir pycryptodome
+"$BASE/venv/bin/python" -c 'from Crypto.Cipher import AES'
 
 if [[ -n "${1:-}" ]]; then
   GITHUB_TOKEN="$1"
@@ -66,7 +70,7 @@ jq -r '.content // empty' "$WORK/github.json" |
 
 echo "Existing nodes: $(grep -cve '^[[:space:]]*$' "$WORK/old.txt" || true)"
 
-/usr/bin/python3 "$WORK/source.py" \
+"$BASE/venv/bin/python" "$WORK/source.py" \
   --region "新加坡" \
   --output-dir "$WORK/new" \
   >/dev/null
