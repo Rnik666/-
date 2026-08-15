@@ -10,11 +10,14 @@ import time
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta, timezone
 
 REPO = "Rnik666/-"
 BRANCH = "2024/3"
 SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
+BY_SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS-BY"
 TARGETS_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/config/targets.conf"
+CHINA_TZ = timezone(timedelta(hours=8))
 
 
 def free_port():
@@ -161,13 +164,19 @@ def publish(target, requested, selected, token):
 
 
 def run_once():
-    raw = urllib.request.urlopen(SOURCE_URL, timeout=30).read()
+    now = datetime.now(CHINA_TZ)
+    by_mode = now.hour == 10
+    source_url = BY_SOURCE_URL if by_mode else SOURCE_URL
+    source_name = "SSS-BY" if by_mode else "SSS"
+    print(f"Source mode: {source_name} at {now:%Y-%m-%d %H:%M:%S} UTC+8", flush=True)
+
+    raw = urllib.request.urlopen(source_url, timeout=30).read()
     decoded = base64.b64decode(raw).decode()
     candidates = list(dict.fromkeys(
         line.strip() for line in decoded.splitlines()
         if line.strip().startswith("trojan://")
     ))
-    print(f"Testing {len(candidates)} SSS candidates", flush=True)
+    print(f"Testing {len(candidates)} {source_name} candidates", flush=True)
 
     passed = []
     with ThreadPoolExecutor(max_workers=6) as executor:
@@ -191,12 +200,22 @@ def run_once():
 
     targets = load_targets()
     total_required = sum(requested for _, requested in targets)
-    if len(passed) < total_required:
+
+    if by_mode:
+        if not passed:
+            raise RuntimeError("no live SSS-BY nodes passed")
+        live_count = len(passed)
+        passed = [passed[index % live_count] for index in range(total_required)]
+        print(
+            f"Repeating {live_count} live SSS-BY nodes to fill {total_required} target slots",
+            flush=True,
+        )
+    elif len(passed) < total_required:
         raise RuntimeError(
             f"only {len(passed)}/{total_required} unique nodes passed"
         )
 
-    # Upload only after the whole round has enough disjoint nodes.
+    # Upload only after the whole round has enough nodes for every target.
     token = github_token()
     offset = 0
     for target, requested in targets:
