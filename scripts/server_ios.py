@@ -201,6 +201,12 @@ def run_once():
     targets = load_targets()
     total_required = sum(requested for _, requested in targets)
 
+    ready_at = datetime.now(CHINA_TZ)
+    if (ready_at.hour == 10) != by_mode:
+        raise RuntimeError(
+            "source window changed during testing; discarding results before upload"
+        )
+
     if by_mode:
         if not passed:
             raise RuntimeError("no live SSS-BY nodes passed")
