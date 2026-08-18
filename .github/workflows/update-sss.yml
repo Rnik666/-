@@ -2,8 +2,6 @@ name: Collect SSS candidates
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
