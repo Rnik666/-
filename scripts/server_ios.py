@@ -50,99 +50,88 @@ def curl(proxy, *args, timeout=CURL_TIMEOUT):
     )
 
 
+def xray_stream_settings(parsed):
+    query = urllib.parse.parse_qs(parsed.query)
+    network = (query.get("type") or query.get("network") or ["tcp"])[0].lower()
+    security = (query.get("security") or ["tls"])[0].lower()
+    server_name = (query.get("sni") or query.get("host") or [parsed.hostname])[0]
+
+    stream = {"network": network, "security": security}
+    if security == "tls":
+        stream["tlsSettings"] = {
+            "serverName": server_name,
+            "allowInsecure": False,
+        }
+
+    if network == "ws":
+        ws_host = (query.get("host") or [parsed.hostname])[0]
+        ws_path = (query.get("path") or ["/"])[0]
+        stream["wsSettings"] = {
+            "path": ws_path,
+            "headers": {"Host": ws_host} if ws_host else {},
+        }
+    elif network == "tcp":
+        header_type = (query.get("headerType") or [""])[0]
+        if header_type:
+            stream["tcpSettings"] = {"header": {"type": header_type}}
+    else:
+        return None
+
+    return stream
+
+
 def test_node(node):
-    """
-    测试单个 trojan 节点，返回 (score_ms, normalized_node) 或 None。
-    优化：缩短每轮时间，减少轮数，快速失败。
-    """
     parsed = urllib.parse.urlsplit(node)
     if not parsed.hostname or not parsed.port or not parsed.username:
         return None
-
+    stream_settings = xray_stream_settings(parsed)
+    if not stream_settings or stream_settings["network"] != "ws":
+        return None
     local_port = free_port()
     proxy = f"socks5h://127.0.0.1:{local_port}"
-
     config = {
         "log": {"loglevel": "none"},
-        "inbounds": [{
-            "listen": "127.0.0.1",
-            "port": local_port,
-            "protocol": "socks",
-            "settings": {"udp": False}
-        }],
+        "inbounds": [{"listen": "127.0.0.1", "port": local_port,
+                       "protocol": "socks", "settings": {"udp": False}}],
         "outbounds": [{
             "protocol": "trojan",
-            "settings": {
-                "servers": [{
-                    "address": parsed.hostname,
-                    "port": parsed.port,
-                    "password": urllib.parse.unquote(parsed.username)
-                }]
-            },
-            "streamSettings": {
-                "network": "tcp",
-                "security": "tls",
-                "tlsSettings": {
-                    "serverName": parsed.hostname,
-                    "allowInsecure": False
-                }
-            },
+            "settings": {"servers": [{"address": parsed.hostname,
+                                         "port": parsed.port,
+                                         "password": urllib.parse.unquote(parsed.username)}]},
+            "streamSettings": stream_settings,
         }],
     }
-
     with tempfile.TemporaryDirectory() as directory:
         path = pathlib.Path(directory) / "config.json"
         path.write_text(json.dumps(config))
-
-        process = subprocess.Popen(
-            ["xray", "run", "-config", str(path)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+        process = subprocess.Popen(["xray", "run", "-config", str(path)],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
-            time.sleep(0.8)  # 等待 xray 就绪
+            time.sleep(0.8)
             delays = []
             exit_ip = ""
-
             for round_no in range(TEST_ROUNDS):
                 started = time.monotonic()
-
-                # 连通性检查（generate_204）
                 check = curl(proxy, "-o", "/dev/null", "-w", "%{http_code}",
                              "https://www.gstatic.com/generate_204")
                 if check.returncode or check.stdout.strip() != "204":
                     return None
-
-                # 出口 IP 检查
                 current_ip = curl(proxy, "https://api.ipify.org").stdout.strip()
                 if not current_ip or (exit_ip and current_ip != exit_ip):
                     return None
                 exit_ip = current_ip
-
-                # 下载测速（文件大小由 DOWNLOAD_BYTES 控制）
                 download_url = f"https://speed.cloudflare.com/__down?bytes={DOWNLOAD_BYTES}"
                 download = curl(proxy, "-o", "/dev/null", "-w", "%{size_download}",
                                 download_url, timeout=DOWNLOAD_TIMEOUT)
                 if download.returncode or int(float(download.stdout.strip() or 0)) < DOWNLOAD_BYTES:
                     return None
-
                 delays.append((time.monotonic() - started) * 1000)
-
                 if round_no < TEST_ROUNDS - 1:
                     time.sleep(ROUND_SLEEP)
-
-            # 构造标准化节点链接
-            base = node.split("#", 1)[0].split("?", 1)[0]
-            query = urllib.parse.urlencode({
-                "security": "tls",
-                "type": "tcp",
-                "headerType": "none",
-                "sni": parsed.hostname
-            })
             median_ms = statistics.median(delays)
             jitter_ms = max(delays) - min(delays)
             score_ms = median_ms + jitter_ms * 0.5
-            return score_ms, f"{base}?{query}"
+            return score_ms, node.split("#", 1)[0]
         except Exception:
             return None
         finally:
@@ -202,7 +191,7 @@ def publish(target, requested, selected, token):
     links = []
     for index, (_, node) in enumerate(selected, 1):
         label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
-        links.append(f"{node}#{label}")
+        links.append(f"{node.split('#', 1)[0]}#{label}")
     subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
 
     encoded_target = urllib.parse.quote(target, safe="")
@@ -238,15 +227,21 @@ def run_once():
 
     raw = urllib.request.urlopen(source_url, timeout=30).read()
     decoded = base64.b64decode(raw).decode()
-    candidates = list(dict.fromkeys(
-        line.strip() for line in decoded.splitlines()
-        if line.strip().startswith("trojan://")
-    ))
+    candidates = []
+    for raw_line in decoded.splitlines():
+        line = raw_line.strip()
+        if not line.startswith("trojan://"):
+            continue
+        parsed = urllib.parse.urlsplit(line)
+        stream = xray_stream_settings(parsed)
+        if stream and stream["network"] == "ws":
+            candidates.append(line.split("#", 1)[0])
+    candidates = list(dict.fromkeys(candidates))
     original_count = len(candidates)
     if original_count > MAX_CANDIDATES:
         candidates = candidates[:MAX_CANDIDATES]
-        print(f"Limiting candidates from {original_count} to {MAX_CANDIDATES}", flush=True)
-    print(f"Testing {len(candidates)} {source_name} candidates", flush=True)
+        print(f"Limiting WS candidates from {original_count} to {MAX_CANDIDATES}", flush=True)
+    print(f"Testing {len(candidates)} WS {source_name} candidates", flush=True)
 
     passed = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
