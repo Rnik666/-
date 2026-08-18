@@ -20,6 +20,8 @@ jobs:
       STARVPN_AES_KEY: ${{ secrets.STARVPN_AES_KEY }}
       STARVPN_AES_IV: ${{ secrets.STARVPN_AES_IV }}
       STARVPN_ACCOUNT_ID: ${{ secrets.STARVPN_ACCOUNT_ID }}
+      STARVPN_NODE_MODE: ws
+      STARVPN_MAX_NODES: "150"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,7 +30,7 @@ jobs:
 
       - run: python3 -m pip install --quiet pycryptodome
 
-      - name: Collect five times into SSS
+      - name: Collect SSS candidate batches
         run: |
           curl -fsSL "https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/scripts/collect_sss.py" -o /tmp/collect_sss.py
           python3 /tmp/collect_sss.py
@@ -39,5 +41,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add SSS
-          git commit -m "Collect five SSS candidate batches"
-          git push origin "HEAD:refs/heads/2024/3"
+          git commit -m "Collect SSS candidate batches"
+
+          for attempt in 1 2 3; do
+            git fetch origin "2024/3"
+            if git rebase "origin/2024/3"; then
+              if git push origin "HEAD:refs/heads/2024/3"; then
+                exit 0
+              fi
+            else
+              git rebase --abort || true
+            fi
+            sleep $((attempt * 5))
+          done
+
+          echo "SSS push failed after 3 attempts" >&2
+          exit 1
