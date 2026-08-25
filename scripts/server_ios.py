@@ -26,7 +26,6 @@ MAX_CANDIDATES = 30            # 最大测试候选数（超出部分丢弃）
 REPO = "Rnik666/-"
 BRANCH = "2024/3"
 SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-BY_SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
 TARGETS_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/config/targets.conf"
 CHINA_TZ = timezone(timedelta(hours=8))
 
@@ -85,7 +84,7 @@ def test_node(node):
     if not parsed.hostname or not parsed.port or not parsed.username:
         return None
     stream_settings = xray_stream_settings(parsed)
-    if not stream_settings or stream_settings["network"] != "ws":
+    if not stream_settings:
         return None
     local_port = free_port()
     proxy = f"socks5h://127.0.0.1:{local_port}"
@@ -220,12 +219,9 @@ def publish(target, requested, selected, token):
 def run_once():
     """执行一次完整的测试-筛选-发布流程。"""
     now = datetime.now(CHINA_TZ)
-    by_mode = now.hour == 10
-    source_url = BY_SOURCE_URL if by_mode else SOURCE_URL
-    source_name = "SSS-BY" if by_mode else "SSS"
-    print(f"Source mode: {source_name} at {now:%Y-%m-%d %H:%M:%S} UTC+8", flush=True)
+    print(f"Run started at {now:%Y-%m-%d %H:%M:%S} UTC+8", flush=True)
 
-    raw = urllib.request.urlopen(source_url, timeout=30).read()
+    raw = urllib.request.urlopen(SOURCE_URL, timeout=30).read()
     decoded = base64.b64decode(raw).decode()
     candidates = []
     for raw_line in decoded.splitlines():
@@ -234,14 +230,14 @@ def run_once():
             continue
         parsed = urllib.parse.urlsplit(line)
         stream = xray_stream_settings(parsed)
-        if stream and stream["network"] == "ws":
+        if stream:
             candidates.append(line.split("#", 1)[0])
     candidates = list(dict.fromkeys(candidates))
     original_count = len(candidates)
     if original_count > MAX_CANDIDATES:
         candidates = candidates[:MAX_CANDIDATES]
-        print(f"Limiting WS candidates from {original_count} to {MAX_CANDIDATES}", flush=True)
-    print(f"Testing {len(candidates)} WS {source_name} candidates", flush=True)
+        print(f"Limiting candidates from {original_count} to {MAX_CANDIDATES}", flush=True)
+    print(f"Testing {len(candidates)} trojan candidates", flush=True)
 
     passed = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -267,22 +263,7 @@ def run_once():
     targets = load_targets()
     total_required = sum(requested for _, requested in targets)
 
-    ready_at = datetime.now(CHINA_TZ)
-    if (ready_at.hour == 10) != by_mode:
-        raise RuntimeError(
-            "source window changed during testing; discarding results before upload"
-        )
-
-    if by_mode:
-        if not passed:
-            raise RuntimeError("no live SSS-BY nodes passed")
-        live_count = len(passed)
-        passed = [passed[index % live_count] for index in range(total_required)]
-        print(
-            f"Repeating {live_count} live SSS-BY nodes to fill {total_required} target slots",
-            flush=True,
-        )
-    elif len(passed) < total_required:
+    if len(passed) < total_required:
         raise RuntimeError(
             f"only {len(passed)}/{total_required} unique nodes passed"
         )
