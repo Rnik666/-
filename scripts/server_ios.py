@@ -79,7 +79,7 @@ def xray_stream_settings(parsed):
     return stream
 
 
-def test_node(node):
+def test_node(index, node):
     parsed = urllib.parse.urlsplit(node)
     if not parsed.hostname or not parsed.port or not parsed.username:
         return None
@@ -130,7 +130,7 @@ def test_node(node):
             median_ms = statistics.median(delays)
             jitter_ms = max(delays) - min(delays)
             score_ms = median_ms + jitter_ms * 0.5
-            return score_ms, node.split("#", 1)[0]
+            return score_ms, node.split("#", 1)[0], index
         except Exception:
             return None
         finally:
@@ -188,7 +188,7 @@ def load_targets():
 def publish(target, requested, selected, token):
     """生成订阅并上传到 GitHub。"""
     links = []
-    for index, (_, node) in enumerate(selected, 1):
+    for index, (_, node, _) in enumerate(selected, 1):
         label = urllib.parse.quote(f"台湾{index}", safe="")
         links.append(f"{node.split('#', 1)[0]}#{label}")
     subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
@@ -232,7 +232,7 @@ def run_once():
         stream = xray_stream_settings(parsed)
         if stream:
             candidates.append(line.split("#", 1)[0])
-    candidates = list(dict.fromkeys(candidates))
+    # 注意：保留原始顺序，不去重
     original_count = len(candidates)
     if original_count > MAX_CANDIDATES:
         candidates = candidates[:MAX_CANDIDATES]
@@ -241,31 +241,22 @@ def run_once():
 
     passed = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = [executor.submit(test_node, node) for node in candidates]
+        futures = [executor.submit(test_node, idx, node) for idx, node in enumerate(candidates)]
         for future in as_completed(futures):
             result = future.result()
             if result:
                 passed.append(result)
                 print(f"PASS {result[0]:.0f}ms", flush=True)
 
-    passed.sort(key=lambda item: item[0])
-
-    # 去重（保留评分最优）
-    unique_passed = []
-    seen_nodes = set()
-    for score, node in passed:
-        if node in seen_nodes:
-            continue
-        seen_nodes.add(node)
-        unique_passed.append((score, node))
-    passed = unique_passed
+    # 按原始索引排序，恢复 SSS 列表顺序
+    passed.sort(key=lambda item: item[2])
 
     targets = load_targets()
     total_required = sum(requested for _, requested in targets)
 
     if len(passed) < total_required:
         raise RuntimeError(
-            f"only {len(passed)}/{total_required} unique nodes passed"
+            f"only {len(passed)}/{total_required} nodes passed"
         )
 
     token = github_token()
