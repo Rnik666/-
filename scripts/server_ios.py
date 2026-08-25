@@ -20,7 +20,7 @@ CURL_TIMEOUT = 12               # 常规请求超时（原20）
 CONNECT_TIMEOUT = 4             # 连接超时（原7）
 DOWNLOAD_TIMEOUT = 15           # 下载测试超时（原25）
 ROUND_SLEEP = 1                 # 轮间等待秒数（原2）
-MAX_CANDIDATES = 200            # 最大测试候选数（超出部分丢弃）
+MAX_CANDIDATES = 30            # 最大测试候选数（超出部分丢弃）
 # ==================================================
 
 REPO = "Rnik666/-"
@@ -190,7 +190,7 @@ def publish(target, requested, selected, token):
     """生成订阅并上传到 GitHub。"""
     links = []
     for index, (_, node) in enumerate(selected, 1):
-        label = urllib.parse.quote(f"🇸🇬新加坡{index}", safe="")
+        label = urllib.parse.quote(f"台湾{index}", safe="")
         links.append(f"{node.split('#', 1)[0]}#{label}")
     subscription = base64.b64encode(("\n".join(links) + "\n").encode()).decode() + "\n"
 
