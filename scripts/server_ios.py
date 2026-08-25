@@ -26,7 +26,7 @@ MAX_CANDIDATES = 30            # 最大测试候选数（超出部分丢弃）
 REPO = "Rnik666/-"
 BRANCH = "2024/3"
 SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
-BY_SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS-BY"
+BY_SOURCE_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/2024/3/SSS"
 TARGETS_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/Rnik666/-/refs/heads/main/config/targets.conf"
 CHINA_TZ = timezone(timedelta(hours=8))
 
